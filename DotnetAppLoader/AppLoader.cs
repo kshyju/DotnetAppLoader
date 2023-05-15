@@ -1,15 +1,18 @@
-﻿namespace DotnetAppLoader
+﻿using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
+
+namespace DotnetAppLoader
 {
-    internal class AppLoader
+    internal static class AppLoader
     {
-        public void Load(string assemblyPath, string tfm)
+        public static int RunApplication(string assemblyPath)
         {
-            var baseDirectory = Path.GetDirectoryName(assemblyPath)!;
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(assemblyPath);
-            var runtimeConfigPath = Path.Combine(baseDirectory, $"{fileNameWithoutExtension}.runtimeconfig.json");
+            // If having problems with the managed host, enable the following:
+            //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
 
             // temporarily hardcoded path to hostfxr dll.
-            string runtimePath = @"C:\Program Files\dotnet\host\fxr\7.0.5";
+            string dotnetBasePath = @"C:\Program Files\dotnet";
+            string runtimePath = Path.Combine(dotnetBasePath, @"host\fxr\7.0.5");
             string hostfxrFileName = IntPtr.Size == 8 ? "hostfxr.dll" : "hostfxr32.dll";
             string hostfxrFullPath = Path.Combine(runtimePath, hostfxrFileName);
 
@@ -18,59 +21,53 @@
             IntPtr assemblyHandle = IntPtr.Zero;
             try
             {
-                hostfxrHandle = NativeMethods.LoadLibrary(hostfxrFullPath);
+                hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
                 if (hostfxrHandle == IntPtr.Zero)
                 {
                     Console.WriteLine($"Failed to load {hostfxrFullPath}");
-                    return;
+                    return -1;
                 }
+
                 Console.WriteLine($"Hostfxr library loaded.");
 
-                // Initialize the .NET Core runtime.
-                IntPtr handle = NativeMethods.hostfxr_initialize_for_runtime_config(runtimeConfigPath, baseDirectory, appName: null);
-                if (handle == IntPtr.Zero)
+                unsafe
                 {
-                    Console.WriteLine("Failed to initialize the .NET Core runtime.");
-                    return;
-                }
-                Console.WriteLine("Initialized the .NET Core runtime.");
+                    fixed (char* hostPathPointer = Environment.CurrentDirectory)
+                    fixed (char* dotnetRootPointer = dotnetBasePath)
+                    {
+                        var parameters = new HostFxr.hostfxr_initialize_parameters
+                        {
+                            size = sizeof(HostFxr.hostfxr_initialize_parameters),
+                            host_path = hostPathPointer,
+                            dotnet_root = dotnetRootPointer
+                        };
 
-                // Load the assembly.
-                assemblyHandle = NativeMethods.LoadLibrary(assemblyPath);
-                if (assemblyHandle == IntPtr.Zero)
-                {
-                    Console.WriteLine($"Failed to load {assemblyPath}");
-                    return;
-                }
-                Console.WriteLine($"Loaded {assemblyPath}");
+                        var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
 
-                // Get the function pointer to the main method.
-                // IntPtr mainPtr = NativeMethods.hostfxr_get_main_address(hostfxrHandle);
-                IntPtr mainPtr = NativeMethods.GetProcAddress(assemblyHandle, "Main");
-                if (mainPtr == IntPtr.Zero)
-                {
-                    Console.WriteLine($"Failed to get function pointer to Main method.");
-                    NativeMethods.FreeLibrary(assemblyHandle);
-                    return;
+                        if (host_context_handle == IntPtr.Zero)
+                        {
+                            Console.WriteLine("Failed to initialize the .NET Core runtime.");
+                            return -1;
+                        }
+
+                        if (error < 0)
+                        {
+                           return error;
+                        }
+
+                        return HostFxr.Run(host_context_handle);
+                    }
                 }
 
-                Console.WriteLine($"Invoking the main method");
-                IntPtr result = NativeMethods.CallMain(mainPtr);
-                Console.WriteLine($"Result of main method: {result}");
             }
             finally
             {
                 if (hostfxrHandle != IntPtr.Zero)
                 {
-                    NativeMethods.FreeLibrary(hostfxrHandle);
+                    NativeLibrary.Free(hostfxrHandle);
                     Console.WriteLine($"Freed hostfxr library handle");
                 }
-                if (assemblyHandle != IntPtr.Zero)
-                {
-                    NativeMethods.FreeLibrary(assemblyHandle);
-                    Console.WriteLine($"Freed assemblyHandle");
-                }
-            }
+            }            
         }
     }
 }
