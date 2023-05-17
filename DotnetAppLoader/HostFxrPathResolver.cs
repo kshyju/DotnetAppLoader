@@ -8,31 +8,23 @@ namespace DotnetAppLoader
     {
         internal static string GetDotnetRootPath()
         {
-            var path = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                path = GetWindowsDotnetRootPath();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                path = GetUnixDotnetRootPath();
-            }
 
-            return path;
+#if LINUX
+            return GetUnixDotnetRootPath();
+#else
+            return GetWindowsDotnetRootPath();
+#endif
         }
 
         internal static string GetHostFxrPath()
         {
             var path = string.Empty;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                path = GetWindowsHostFxrPath();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                path = GetUnixHostFxrPath();
-            }
+#if LINUX
+            path = GetUnixHostFxrPath();
+#else
+            path = GetWindowsHostFxrPath();
+#endif
 
             if (!File.Exists(path))
             {
@@ -40,7 +32,7 @@ namespace DotnetAppLoader
             }
 
             return path;
-        }       
+        }
 
 
         private static string GetLatestVersion(string hostFxrVersionsDirPath)
@@ -51,7 +43,7 @@ namespace DotnetAppLoader
 
             Array.Sort(versionDirectories);
             var latestVersion = Path.GetFileName(versionDirectories[^1]);
-            
+
             return latestVersion;
         }
     }

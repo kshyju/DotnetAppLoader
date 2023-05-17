@@ -11,13 +11,9 @@ namespace DotnetAppLoader
             // In Unix enviornment, you need to run the below command in the terminal to set the environment variable.
             // export COREHOST_TRACE=1
 
-
             Logger.Log($"Assembly path to load:{assemblyPath}");
 
             var hostfxrFullPath = HostFxr.GetPath();
-            Logger.Log($"hostfxrFullPath:{hostfxrFullPath}");
-
-
             IntPtr hostfxrHandle = IntPtr.Zero;
 
             try
@@ -25,16 +21,14 @@ namespace DotnetAppLoader
                 hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
                 if (hostfxrHandle == IntPtr.Zero)
                 {
-                    Logger.Log($"Failed to load {hostfxrFullPath}");
+                    Logger.Log($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
                     return -1;
                 }
 
-                Logger.Log($"Hostfxr library loaded successfully.");
+                Logger.Log($"hostfxr library loaded successfully.");
 
                 var hostPath = Environment.CurrentDirectory;
-                Logger.Log($"hostPath: {hostPath}");
                 var dotnetBasePath = HostFxr.GetDotnetRootPath();
-                Logger.Log($"dotnetBasePath: {dotnetBasePath}");
 
                 unsafe
                 {
@@ -43,18 +37,14 @@ namespace DotnetAppLoader
                     {
                         var parameters = new HostFxr.hostfxr_initialize_parameters
                         {
-                            size = sizeof(HostFxr.hostfxr_initialize_parameters),
-
-                            // For Linux, remove those.
-                            //host_path = hostPathPointer,
-                            //dotnet_root = dotnetRootPointer
+                            size = sizeof(HostFxr.hostfxr_initialize_parameters)
                         };
 
                         var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
 
                         if (host_context_handle == IntPtr.Zero)
                         {
-                            Logger.Log($"Failed to initialize the .NET Core runtime. host_context_handle:{host_context_handle}");
+                            Logger.Log($"Failed to initialize the .NET Core runtime. dotnetBasePath:{dotnetBasePath}, hostPath:{hostPath}");
                             return -1;
                         }
 
