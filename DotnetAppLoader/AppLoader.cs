@@ -10,15 +10,13 @@ namespace DotnetAppLoader
             // If having problems with the managed host, enable the following:
             //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
 
-            // temporarily hardcoded path to hostfxr dll.
-            string dotnetBasePath = @"C:\Program Files\dotnet";
-            string runtimePath = Path.Combine(dotnetBasePath, @"host\fxr\7.0.5");
-            string hostfxrFileName = IntPtr.Size == 8 ? "hostfxr.dll" : "hostfxr32.dll";
-            string hostfxrFullPath = Path.Combine(runtimePath, hostfxrFileName);
-
+            var hostfxrFullPath = HostFxr.GetPath();
+            Console.WriteLine($"hostfxrFullPath:{hostfxrFullPath}");
+            var dotnetBasePath = HostFxr.GetDotnetRootPath();
+            Console.WriteLine($"dotnetBasePath:{dotnetBasePath}");
 
             IntPtr hostfxrHandle = IntPtr.Zero;
-            IntPtr assemblyHandle = IntPtr.Zero;
+            
             try
             {
                 hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
@@ -42,6 +40,8 @@ namespace DotnetAppLoader
                             dotnet_root = dotnetRootPointer
                         };
 
+                        // Hard coded assembly path might be causing the initialization to fail in linux. 
+                        // Pass via cmdline
                         var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
 
                         if (host_context_handle == IntPtr.Zero)

@@ -4,7 +4,12 @@ class Program
 {
     static int Main(string[] args)
     {
-        var workerAssemblyPath = @"D:\src\misc\DotnetAppLoader\SampleApp\bin\Debug\net6.0\SampleApp.dll";
+        var workerAssemblyPath = @"C:\Dev\OSS\DotnetAppLoader\SampleApp\bin\Debug\net7.0\SampleApp.dll";
+
+        if (args.Length > 0)
+        {
+            workerAssemblyPath = args[0];
+        }
 
         return AppLoader.RunApplication(workerAssemblyPath);
     }
