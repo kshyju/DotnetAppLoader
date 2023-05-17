@@ -11,6 +11,7 @@ namespace DotnetAppLoader
             public char* dotnet_root;
         };
 
+        // For linux ArraySubType = UnmanagedType.LPStr)
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_initialize_for_dotnet_command_line")]
         public unsafe static partial int Initialize(
                 int argc,

@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace DotnetAppLoader
 {
@@ -8,12 +7,12 @@ namespace DotnetAppLoader
         public static int RunApplication(string assemblyPath)
         {
             // If having problems with the managed host, enable the following:
-            Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+            // Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
             // In Unix enviornment, you need to run the below command in the terminal to set the environment variable.
             // export COREHOST_TRACE=1
 
 
-            Logger.Log($"AssemblyPath to load:{assemblyPath}");
+            Logger.Log($"Assembly path to load:{assemblyPath}");
 
             var hostfxrFullPath = HostFxr.GetPath();
             Logger.Log($"hostfxrFullPath:{hostfxrFullPath}");
@@ -34,7 +33,7 @@ namespace DotnetAppLoader
 
                 var hostPath = Environment.CurrentDirectory;
                 Logger.Log($"hostPath: {hostPath}");
-                var dotnetBasePath = @"/usr/share/dotnet"; //HostFxr.GetDotnetRootPath();
+                var dotnetBasePath = HostFxr.GetDotnetRootPath();
                 Logger.Log($"dotnetBasePath: {dotnetBasePath}");
 
                 unsafe
@@ -45,11 +44,13 @@ namespace DotnetAppLoader
                         var parameters = new HostFxr.hostfxr_initialize_parameters
                         {
                             size = sizeof(HostFxr.hostfxr_initialize_parameters),
-                            host_path = hostPathPointer,
-                            dotnet_root = dotnetRootPointer
+
+                            // For Linux, remove those.
+                            //host_path = hostPathPointer,
+                            //dotnet_root = dotnetRootPointer
                         };
 
-                        var error = HostFxr.Initialize(2, new string[] { "DotnetAppLoader", assemblyPath }, ref parameters, out var host_context_handle);
+                        var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
 
                         if (host_context_handle == IntPtr.Zero)
                         {
