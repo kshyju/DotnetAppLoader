@@ -9,30 +9,33 @@ namespace DotnetAppLoader
         {
             // If having problems with the managed host, enable the following:
             Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
-            Environment.SetEnvironmentVariable("COREHOST_TRACEFILE", "./CoreHostTraceLog.txt");
+            // In Unix enviornment, you need to run the below command in the terminal to set the environment variable.
+            // export COREHOST_TRACE=1
 
-            Console.WriteLine($"assemblyPath to load:{assemblyPath}");
+
+            Logger.Log($"AssemblyPath to load:{assemblyPath}");
 
             var hostfxrFullPath = HostFxr.GetPath();
-            Console.WriteLine($"hostfxrFullPath:{hostfxrFullPath}");
-            var dotnetBasePath = HostFxr.GetDotnetRootPath();
-            Console.WriteLine($"dotnetBasePath:{dotnetBasePath}");
+            Logger.Log($"hostfxrFullPath:{hostfxrFullPath}");
+
 
             IntPtr hostfxrHandle = IntPtr.Zero;
-            
+
             try
             {
                 hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
                 if (hostfxrHandle == IntPtr.Zero)
                 {
-                    Console.WriteLine($"Failed to load {hostfxrFullPath}");
+                    Logger.Log($"Failed to load {hostfxrFullPath}");
                     return -1;
                 }
 
-                Console.WriteLine($"Hostfxr library loaded.");
+                Logger.Log($"Hostfxr library loaded successfully.");
 
                 var hostPath = Environment.CurrentDirectory;
-                Console.WriteLine($"hostPath:{hostPath}");
+                Logger.Log($"hostPath: {hostPath}");
+                var dotnetBasePath = @"/usr/share/dotnet"; //HostFxr.GetDotnetRootPath();
+                Logger.Log($"dotnetBasePath: {dotnetBasePath}");
 
                 unsafe
                 {
@@ -46,17 +49,17 @@ namespace DotnetAppLoader
                             dotnet_root = dotnetRootPointer
                         };
 
-                        var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
+                        var error = HostFxr.Initialize(2, new string[] { "DotnetAppLoader", assemblyPath }, ref parameters, out var host_context_handle);
 
                         if (host_context_handle == IntPtr.Zero)
                         {
-                            Console.WriteLine("Failed to initialize the .NET Core runtime.");
+                            Logger.Log($"Failed to initialize the .NET Core runtime. host_context_handle:{host_context_handle}");
                             return -1;
                         }
 
                         if (error < 0)
                         {
-                           return error;
+                            return error;
                         }
 
                         return HostFxr.Run(host_context_handle);
@@ -69,9 +72,9 @@ namespace DotnetAppLoader
                 if (hostfxrHandle != IntPtr.Zero)
                 {
                     NativeLibrary.Free(hostfxrHandle);
-                    Console.WriteLine($"Freed hostfxr library handle");
+                    Logger.Log($"Freed hostfxr library handle");
                 }
-            }            
+            }
         }
     }
 }
