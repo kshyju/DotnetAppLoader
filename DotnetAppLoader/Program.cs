@@ -4,13 +4,12 @@ class Program
 {
     static int Main(string[] args)
     {
-        var workerAssemblyPath = @"C:\Dev\OSS\DotnetAppLoader\SampleApp\bin\Debug\net7.0\SampleApp.dll";
-
-        if (args.Length > 0)
+        if (args.Length == 0)
         {
-            workerAssemblyPath = args[0];
+            Console.WriteLine("Pass the worker assembly path as argunent. Ex: ./DotnetAppLoader C:/Temp/FunctionApp1.dll");
+            return 1;
         }
-
+        var workerAssemblyPath = args[0];
         return AppLoader.RunApplication(workerAssemblyPath);
     }
 }

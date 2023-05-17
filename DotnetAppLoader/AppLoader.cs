@@ -8,7 +8,10 @@ namespace DotnetAppLoader
         public static int RunApplication(string assemblyPath)
         {
             // If having problems with the managed host, enable the following:
-            //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+            Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+            Environment.SetEnvironmentVariable("COREHOST_TRACEFILE", "./CoreHostTraceLog.txt");
+
+            Console.WriteLine($"assemblyPath to load:{assemblyPath}");
 
             var hostfxrFullPath = HostFxr.GetPath();
             Console.WriteLine($"hostfxrFullPath:{hostfxrFullPath}");
@@ -28,9 +31,12 @@ namespace DotnetAppLoader
 
                 Console.WriteLine($"Hostfxr library loaded.");
 
+                var hostPath = Environment.CurrentDirectory;
+                Console.WriteLine($"hostPath:{hostPath}");
+
                 unsafe
                 {
-                    fixed (char* hostPathPointer = Environment.CurrentDirectory)
+                    fixed (char* hostPathPointer = hostPath)
                     fixed (char* dotnetRootPointer = dotnetBasePath)
                     {
                         var parameters = new HostFxr.hostfxr_initialize_parameters
@@ -40,8 +46,6 @@ namespace DotnetAppLoader
                             dotnet_root = dotnetRootPointer
                         };
 
-                        // Hard coded assembly path might be causing the initialization to fail in linux. 
-                        // Pass via cmdline
                         var error = HostFxr.Initialize(1, new string[] { assemblyPath }, ref parameters, out var host_context_handle);
 
                         if (host_context_handle == IntPtr.Zero)
