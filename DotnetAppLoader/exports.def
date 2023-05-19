@@ -1,0 +1,3 @@
+EXPORTS
+   get_application_properties
+   register_callbacks

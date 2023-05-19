@@ -11,7 +11,7 @@ class Program
         }
         var workerAssemblyPath = args[0];
 
-        using (AppLoader appLoader = AppLoader.Instance)
+        using (var appLoader = AppLoader.Instance)
         {
             appLoader.RunApplication(workerAssemblyPath);
         }
