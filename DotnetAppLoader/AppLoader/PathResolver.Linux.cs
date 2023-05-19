@@ -1,7 +1,5 @@
-﻿namespace DotnetAppLoader
-{
-
-    internal static partial class HostFxrPathResolver
+﻿
+    internal static partial class PathResolver
     {
         private static string GetUnixDotnetRootPath()
         {
@@ -27,6 +25,4 @@
 
             return Path.GetFullPath(hostfxrPath);
         }
-
     }
-}

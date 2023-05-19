@@ -10,6 +10,12 @@ class Program
             return 1;
         }
         var workerAssemblyPath = args[0];
-        return AppLoader.RunApplication(workerAssemblyPath);
+
+        using (AppLoader appLoader = AppLoader.Instance)
+        {
+            appLoader.RunApplication(workerAssemblyPath);
+        }
+
+        return 1;
     }
 }

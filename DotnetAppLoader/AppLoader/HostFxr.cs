@@ -28,15 +28,20 @@ namespace DotnetAppLoader
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_run_app")]
         public static partial int Run(IntPtr host_context_handle);
 
-        /// <summary>
-        /// Gets the absolute path to the hostfxr file for the current operating system.
-        /// </summary>
-        public static string GetPath() => HostFxrPathResolver.GetHostFxrPath();
+        [LibraryImport("hostfxr", EntryPoint = "hostfxr_set_runtime_property_value")]
+        public static partial int SetAppContextData(IntPtr host_context_handle, [MarshalAs(
+#if LINUX
+    UnmanagedType.LPStr
+#else
+     UnmanagedType.LPWStr
+#endif
+            )] string name, [MarshalAs(
+#if LINUX
+    UnmanagedType.LPStr
+#else
+     UnmanagedType.LPWStr
+#endif
+            )] string value);
 
-        /// <summary>
-        /// Gets the absolute path to the dotnet root for the current operating system.
-        /// </summary>
-        /// <returns></returns>
-        public static string GetDotnetRootPath() => HostFxrPathResolver.GetDotnetRootPath();
     }
 }
