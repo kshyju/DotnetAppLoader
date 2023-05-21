@@ -1,56 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DotnetAppLoader.Interop.FunctionsNetHost;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotnetAppLoader.Interop
 {
     public struct NativeHostData
     {
         public IntPtr pNativeApplication;
-        //public CallbackDelegate Callback;
         public IntPtr Callback;
     }
 
-    public delegate int CallbackDelegate(int value);
+    public class NativeApplication
+    {
+        NativeApplication _instance = new NativeApplication();
+
+        public NativeApplication Instance => _instance;
+    }
 
     public class NativeExports
     {
-        public delegate bool FPtr(int value);
+        public delegate int CallbackDelegate(int value);
+        // public delegate int RequestHandlerDelegate(ref byte[] msg, int size, IntPtr grpcHandle);
 
         // https://github.com/dotnet/runtime/issues/78663
 
         [UnmanagedCallersOnly(EntryPoint = "get_application_properties")]
-        public static int get_application_properties(IntPtr pNativeHostDataPtr)
+        public static int get_application_properties(NativeHostData nativeHostData)
         {
             Logger.Log("get_application_properties was invoked");
-            NativeHostData nativeHostData = Marshal.PtrToStructure<NativeHostData>(pNativeHostDataPtr);
 
-            // Convert the callback IntPtr to the actual delegate type
-            CallbackDelegate callbackDelegate = Marshal.GetDelegateForFunctionPointer<CallbackDelegate>(nativeHostData.Callback);
+            var nativeHostApplication = new NativeHostApplication();
+            GCHandle gch = GCHandle.Alloc(nativeHostApplication, GCHandleType.Pinned);
+            IntPtr pObj = gch.AddrOfPinnedObject();
+            nativeHostData.pNativeApplication = pObj;
 
-            // Invoke the callback delegate if it's not null
-            if (callbackDelegate != null)
-            {
-                int result = callbackDelegate.Invoke(42); // Example usage
-                Console.WriteLine($"Callback result: {result}");
-            }
+            Logger.Log($"nativeHostApplication ptr:{pObj}");
 
             return 1;
         }
 
-        // public delegate int RequestHandlerDelegate(ref byte[] msg, int size, IntPtr grpcHandle);
-
 
         [UnmanagedCallersOnly(EntryPoint = "register_callbacks")]
-        public static int register_callbacks(IntPtr pInProcessApplication,
-            IntPtr requestCallback,
-            //   FPtr a,
+        public unsafe static int register_callbacks(IntPtr pInProcessApplication,
+                                                delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
             IntPtr grpcHandler)
         {
+            //Marshal.PtrToStructure(pInProcessApplication, typeof())
             Logger.Log("register_callbacks was invoked");
+
+            return 1;
+        }
+
+        [UnmanagedCallersOnly(EntryPoint = "register_callbacks")]
+        public unsafe static int send_streaming_message(IntPtr pInProcessApplication,
+byte* streamingMessage, int streamingMessageSize)
+        {
+
+
+            Logger.Log("register_callbacks was invoked");
+
+
 
             return 1;
         }
