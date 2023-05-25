@@ -11,12 +11,14 @@ namespace SampleApp
 
     internal static unsafe partial class NativeMethods
     {
-        private const string NativeWorkerDll = "FunctionsNetHost.exe";
+        // In windows platform, we need to set "FunctionsNetHost.exe";
+        private const string NativeWorkerDll = "FunctionsNetHost";
 
         public static NativeHost GetNativeHostData()
         {
             Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
             _ = get_application_properties(out var hostData);
+
             return hostData;
         }
 

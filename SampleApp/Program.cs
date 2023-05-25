@@ -4,20 +4,18 @@
     {
         public static void Main(string[] args)
         {
-            for (var i = 1; i <= 2; i++)
-            {
-                Console.WriteLine(" [SampleApp] Hello world - " + i);
-                Thread.Sleep(200);
-            }
+            var appDomainBaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var assemblyLocation = typeof(SampleApp.Program).Assembly.Location;
+            Console.WriteLine($" [SampleApp] appDomainBaseDirectory: {appDomainBaseDirectory}");
+            Console.WriteLine($" [SampleApp] assemblyLocation: {assemblyLocation}");
 
             var nativeHost = new NativeWorkerClientFactory().CreateClient();
-            Console.WriteLine($"NativeHost Application Ptr: {nativeHost.pNativeApplication}");
+            Console.WriteLine($" [SampleApp] NativeHost Application Ptr: {nativeHost.pNativeApplication}");
 
-            for (var i = 1; i <= 5; i++)
+            for (var i = 1; i <= 5000; i++)
             {
-
                 Console.WriteLine(" [SampleApp] - " + i);
-                Thread.Sleep(200);
+                Thread.Sleep(1000);
             }
         }
     }

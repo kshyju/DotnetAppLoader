@@ -46,5 +46,8 @@ EXPOSE 80
 
 RUN dir -s
 
+ENV LD_DEBUG=libs
+# See possible values for this env variable:https://bnikolic.co.uk/blog/linux-ld-debug.html
+
 # Run the application
 ENTRYPOINT ["./FunctionsNetHost", "./../sampleapp/SampleApp.dll"]

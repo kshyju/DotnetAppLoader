@@ -1,9 +1,6 @@
 ﻿using DotnetAppLoader;
 using FunctionsNetHost;
-using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 internal sealed class AppLoader : IDisposable
 {
@@ -78,6 +75,7 @@ internal sealed class AppLoader : IDisposable
             HostFxr.SetAppContextData(hostContextHandle, "AZURE_FUNCTIONS_NATIVE_HOST", "1");
             Logger.LogDebug($"Before calling HostFxr.Run()");
 
+            //return 1;
             return HostFxr.Run(hostContextHandle);
         }
     }
