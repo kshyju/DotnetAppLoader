@@ -13,10 +13,8 @@ WORKDIR /src/sampleapp
 # Copy the sample console app files to the working directory
 COPY ./SampleApp ./
 
-RUN dotnet restore
-
-# Publish the application
-RUN dotnet publish -c Release -o out
+# Publish the sample application
+RUN dotnet publish -r linux-x64 -c Release -o out --no-self-contained
 
 # Do same for DotnetAppLoader
 WORKDIR /src/dotnetapploader
@@ -24,10 +22,8 @@ WORKDIR /src/dotnetapploader
 # Copy the project files to the working directory
 COPY ./DotnetAppLoader ./
 
-RUN dotnet restore
-
 # Publish the application. This will do AOT publishing (enabled on project file)
-RUN dotnet publish -c Release -o out
+RUN dotnet publish -r linux-x64 -c Release -o out
 
 
 # Set the base image to use for running the application
@@ -51,4 +47,4 @@ EXPOSE 80
 RUN dir -s
 
 # Run the application
-ENTRYPOINT ["./DotnetAppLoader", "./../app/sampleapp/SampleApp.dll"]
+ENTRYPOINT ["./FunctionsNetHost", "./../sampleapp/SampleApp.dll"]

@@ -6,17 +6,18 @@
         {
             for (var i = 1; i <= 2; i++)
             {
-                Console.WriteLine("Hello world - " + i);
-                Thread.Sleep(1000);
+                Console.WriteLine(" [SampleApp] Hello world - " + i);
+                Thread.Sleep(200);
             }
 
             var nativeHost = new NativeWorkerClientFactory().CreateClient();
             Console.WriteLine($"NativeHost Application Ptr: {nativeHost.pNativeApplication}");
 
-            for (var i = 1; i <= 2; i++)
+            for (var i = 1; i <= 5; i++)
             {
-                Console.WriteLine("Yo0 world - " + i);
-                Thread.Sleep(1000);
+
+                Console.WriteLine(" [SampleApp] - " + i);
+                Thread.Sleep(200);
             }
         }
     }

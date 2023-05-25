@@ -15,6 +15,7 @@ namespace SampleApp
 
         public static NativeHost GetNativeHostData()
         {
+            Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
             _ = get_application_properties(out var hostData);
             return hostData;
         }
@@ -23,7 +24,7 @@ namespace SampleApp
             delegate* unmanaged<byte**, int, nint, nint> requestCallback,
             nint grpcHandler)
         {
-            Console.WriteLine("NativeMethods.RegisterCallbacks");
+            Console.WriteLine(" [SampleApp] NativeMethods.RegisterCallbacks");
             _ = register_callbacks(nativeApplication, requestCallback, grpcHandler);
         }
 
