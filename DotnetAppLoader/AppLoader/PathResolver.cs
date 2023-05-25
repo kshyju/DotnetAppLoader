@@ -9,9 +9,9 @@
             if (_dotnetRootPath == null)
             {
 #if LINUX
-            dotnetRootPath = GetUnixDotnetRootPath();
+            _dotnetRootPath = GetUnixDotnetRootPath();
 #else
-                _dotnetRootPath = GetWindowsDotnetRootPath();
+            _dotnetRootPath = GetWindowsDotnetRootPath();
 #endif
             }
 

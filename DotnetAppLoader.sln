@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetAppLoader", "DotnetAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp", "SampleApp\SampleApp.csproj", "{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp1", "FunctionApp1\FunctionApp1.csproj", "{116D659D-D6B7-4542-93D2-31904F962BC6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{116D659D-D6B7-4542-93D2-31904F962BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{116D659D-D6B7-4542-93D2-31904F962BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{116D659D-D6B7-4542-93D2-31904F962BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{116D659D-D6B7-4542-93D2-31904F962BC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
