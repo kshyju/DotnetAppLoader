@@ -11,7 +11,7 @@ namespace SampleApp
 
     internal static unsafe partial class NativeMethods
     {
-        private const string NativeWorkerDll = "FunctionsNetHost";
+        private const string NativeWorkerDll = "FunctionsNetHost.exe";
 
         public static NativeHost GetNativeHostData()
         {

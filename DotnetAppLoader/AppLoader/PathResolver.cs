@@ -15,11 +15,11 @@ namespace FunctionsNetHost
             {
                 return _hostFxrPath;
             }
-//#if LINUX
+#if LINUX
             _hostFxrPath = GetUnixHostFxrPath();
-//#else
-//            _hostFxrPath = FunctionsNetHost.PathResolver.GetWindowsHostFxrPath();
-//#endif
+#else
+            _hostFxrPath = GetWindowsHostFxrPath();
+#endif
             if (!File.Exists(_hostFxrPath))
             {
                 throw new FileNotFoundException(_hostFxrPath);
