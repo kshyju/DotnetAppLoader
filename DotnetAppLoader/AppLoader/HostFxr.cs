@@ -14,12 +14,12 @@ namespace DotnetAppLoader
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_initialize_for_dotnet_command_line")]
         public unsafe static partial int Initialize(
                 int argc,
-                [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr
-//#if LINUX
-//    UnmanagedType.LPStr
-//#else
-//     UnmanagedType.LPWStr
-//#endif
+                [MarshalAs(UnmanagedType.LPArray, ArraySubType = 
+#if LINUX
+    UnmanagedType.LPStr
+#else
+     UnmanagedType.LPWStr
+#endif
             )] string[] argv,
                 ref hostfxr_initialize_parameters parameters,
                 out IntPtr host_context_handle
@@ -30,17 +30,17 @@ namespace DotnetAppLoader
 
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_set_runtime_property_value")]
         public static partial int SetAppContextData(IntPtr host_context_handle, [MarshalAs(
-//#if LINUX
+#if LINUX
     UnmanagedType.LPStr
-//#else
-//     UnmanagedType.LPWStr
-//#endif
+#else
+     UnmanagedType.LPWStr
+#endif
             )] string name, [MarshalAs(
-//#if LINUX
+#if LINUX
     UnmanagedType.LPStr
-//#else
-//     UnmanagedType.LPWStr
-//#endif
+#else
+     UnmanagedType.LPWStr
+#endif
             )] string value);
 
     }

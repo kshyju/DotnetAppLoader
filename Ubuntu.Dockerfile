@@ -23,7 +23,7 @@ WORKDIR /src/dotnetapploader
 COPY ./DotnetAppLoader ./
 
 # Publish the application. This will do AOT publishing (enabled on project file)
-RUN dotnet publish -r linux-x64 -c Release -o out
+RUN dotnet publish -r linux-x64 -c Release -o out -p:FUNCTIONS_CONSTANTS=LINUX
 
 
 # Set the base image to use for running the application

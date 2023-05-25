@@ -1,6 +1,4 @@
-﻿using DotnetAppLoader;
-
-class Program
+﻿class Program
 {
     static int Main(string[] args)
     {
@@ -11,17 +9,29 @@ class Program
         }
         var workerAssemblyPath = args[0];
 
+        Console.WriteLine("11.48");
+
         using (var appLoader = AppLoader.Instance)
         {
-            appLoader.RunApplication(workerAssemblyPath);
-
-            int counter = 0;
-            while (counter < 10000)
+            try
             {
-                Thread.Sleep(1000);
-                if (counter % 10 == 0)
+                appLoader.RunApplication(workerAssemblyPath);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error calling RunApplication from Main.", ex);
+
+                // Keep it running if we want to login to container and inspect something.
+                int counter = 0;
+                while (counter < 10000)
                 {
-                    Console.WriteLine(counter++);
+                    counter++;
+                    Thread.Sleep(1000);
+                    //if (counter % 10 == 0)
+                    {
+                        Console.WriteLine(counter);
+                    }
                 }
             }
         }

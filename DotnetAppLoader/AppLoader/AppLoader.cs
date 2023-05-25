@@ -68,10 +68,12 @@ internal sealed class AppLoader : IDisposable
                 return error;
             }
 
-            // Displays library search paths in linux
-            Environment.SetEnvironmentVariable("LD_DEBUG", "libs");
-            Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+            
+            var ldDebug = Environment.GetEnvironmentVariable("LD_DEBUG");
+            Logger.LogInfo($"LD_DEBUG env variable value:{ldDebug}");
 
+            var ldLibraryPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+            Logger.LogInfo($"LD_LIBRARY_PATH env variable value:{ldLibraryPath}");
 
             HostFxr.SetAppContextData(hostContextHandle, "AZURE_FUNCTIONS_NATIVE_HOST", "1");
             Logger.LogDebug($"Before calling HostFxr.Run()");
