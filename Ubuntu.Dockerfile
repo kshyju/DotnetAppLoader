@@ -46,6 +46,8 @@ EXPOSE 80
 
 RUN dir -s
 
+# ENV LD_LIBRARY_PATH="/app/dotnetapploader:${LD_LIBRARY_PATH}"
+
 ENV LD_DEBUG=libs
 # See possible values for this env variable:https://bnikolic.co.uk/blog/linux-ld-debug.html
 

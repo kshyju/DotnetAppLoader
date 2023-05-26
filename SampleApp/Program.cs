@@ -9,6 +9,12 @@
             Console.WriteLine($" [SampleApp] appDomainBaseDirectory: {appDomainBaseDirectory}");
             Console.WriteLine($" [SampleApp] assemblyLocation: {assemblyLocation}");
 
+            //for (var i = 1; i <= 5000; i++)
+            //{
+            //    Console.WriteLine(" [SampleApp] - " + i);
+            //    Thread.Sleep(1000);
+            //}
+
             var nativeHost = new NativeWorkerClientFactory().CreateClient();
             Console.WriteLine($" [SampleApp] NativeHost Application Ptr: {nativeHost.pNativeApplication}");
 
