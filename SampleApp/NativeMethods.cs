@@ -2,7 +2,6 @@
 
 namespace SampleApp
 {
-
     [StructLayout(LayoutKind.Sequential)]
     internal struct NativeHost
     {
@@ -16,16 +15,10 @@ namespace SampleApp
 
         public static NativeHost GetNativeHostData()
         {
-            Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
-
-            // Set the LD_LIBRARY_PATH to include your custom location
-           // string libraryPath = "/app/dotnetapploader:/myfooapp";
             var currentLDLibraryPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-            
             Console.WriteLine($" [SampleApp] LD_LIBRARY_PATH value: {currentLDLibraryPath}");
 
-            //string newLDLibraryPath = libraryPath + ":" + currentLDLibraryPath;
-            //Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", newLDLibraryPath);
+            Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
 
             _ = get_application_properties(out var hostData);
 

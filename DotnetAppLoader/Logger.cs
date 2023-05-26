@@ -4,7 +4,7 @@ namespace DotnetAppLoader
 {
     internal class Logger
     {
-        const string prefix = " ";
+        const string prefix = "";
         public static void LogInfo(string message)
         {
             string ts = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
