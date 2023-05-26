@@ -74,7 +74,7 @@ RUN apt-get update && apt-get install -y apt-transport-https wget clang clang zl
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb && \
     apt-get update && \
-    apt-get install -y dotnet-sdk-7.0 && \
+    apt-get install -y dotnet-runtime-7.0 && \
     rm -rf /var/lib/apt/lists/*    
 
 # Download and install the Microsoft package repository for .NET
@@ -82,9 +82,9 @@ RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod
     && dpkg -i packages-microsoft-prod.deb \
     && rm packages-microsoft-prod.deb
 
-# Update the package list and install .NET 7 SDK
+# Update the package list and install .NET 7 runtime
 RUN apt-get update \
-    && apt-get install -y dotnet-sdk-7.0 \
+    && apt-get install -y dotnet-runtime-7.0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the PATH environment variable for dotnet
@@ -107,6 +107,8 @@ EXPOSE 80
 
 # Set the LD_LIBRARY_PATH environment variable
 # ENV LD_LIBRARY_PATH="/app/dotnetapploader"
+
+ENV LD_DEBUG=libs
 
 #  Update the system's dynamic linker cache
 RUN ldconfig
