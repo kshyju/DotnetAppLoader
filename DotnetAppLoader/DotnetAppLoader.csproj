@@ -10,6 +10,13 @@
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
+  <!--You do not need to install ICU if you enable globalization invariant mode.-->
+  <!--https://github.com/dotnet/core/blob/main/release-notes/7.0/linux-packages.md -->
+  
+  <!--<PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>-->
+
   <PropertyGroup>
     <DefineConstants>$(FUNCTIONS_CONSTANTS)</DefineConstants>
   </PropertyGroup>
