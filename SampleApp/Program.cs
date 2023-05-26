@@ -5,15 +5,24 @@
         public static void Main(string[] args)
         {
             var appDomainBaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var assemblyLocation = typeof(SampleApp.Program).Assembly.Location;
-            Console.WriteLine($" [SampleApp] appDomainBaseDirectory: {appDomainBaseDirectory}");
-            Console.WriteLine($" [SampleApp] assemblyLocation: {assemblyLocation}");
+            var assemblyLocation = typeof(Program).Assembly.Location;
 
-            //for (var i = 1; i <= 5000; i++)
-            //{
-            //    Console.WriteLine(" [SampleApp] - " + i);
-            //    Thread.Sleep(1000);
-            //}
+            Console.WriteLine($" [SampleApp] AppDomain.CurrentDomain.BaseDirectory: {appDomainBaseDirectory}");
+            Console.WriteLine($" [SampleApp] Assembly Location: {assemblyLocation}");
+
+            var dontCrashEnvVarValue = Environment.GetEnvironmentVariable("DONTCRASH");
+            Console.WriteLine($" [SampleApp] DONTCRASH EnvironmentVariable: {dontCrashEnvVarValue}");
+
+            if ( dontCrashEnvVarValue != null )
+            {
+                // If "CreateClient" is crashing,
+                // Run this loop so that we can inspect the container before it crashes.
+                for (var i = 1; i <= 5000; i++)
+                {
+                    Console.WriteLine(" [SampleApp] - " + i);
+                    Thread.Sleep(1000);
+                }
+            }
 
             var nativeHost = new NativeWorkerClientFactory().CreateClient();
             Console.WriteLine($" [SampleApp] NativeHost Application Ptr: {nativeHost.pNativeApplication}");

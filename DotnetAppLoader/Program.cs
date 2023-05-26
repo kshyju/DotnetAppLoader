@@ -9,8 +9,6 @@
         }
         var workerAssemblyPath = args[0];
 
-        Console.WriteLine("11.48");
-
         using (var appLoader = AppLoader.Instance)
         {
             try

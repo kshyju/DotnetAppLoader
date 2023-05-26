@@ -39,10 +39,7 @@ internal sealed class AppLoader : IDisposable
 
     internal int RunApplication(string assemblyPath)
     {
-        Logger.LogDebug($"Assembly path to run:{assemblyPath}");
-
-        var fileExist = File.Exists(assemblyPath);
-        Logger.LogDebug($"File exists:{fileExist}");
+        Logger.LogDebug($"Assembly path:{assemblyPath}. File exists:{File.Exists(assemblyPath)}");
 
         unsafe
         {
