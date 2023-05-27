@@ -4,7 +4,7 @@
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./DotnetAppLoader C:/Temp/FunctionApp1.dll");
+            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
             return 1;
         }
         var workerAssemblyPath = args[0];
@@ -21,7 +21,7 @@
                 Console.WriteLine("Error calling RunApplication from Main.", ex);
 
                 // Keep it running if we want to login to container and inspect something.
-                int counter = 0;
+                var counter = 0;
                 while (counter < 10000)
                 {
                     counter++;
