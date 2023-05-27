@@ -1,18 +1,21 @@
 
 
-### Docker image for testing linux
+### Testing in Linux
 
-To build the image, open a terminal in the repo root (where you will see the Debian.Dockerfile). Run the below command to build the image.
+The docker image present in the root can be used to build a container where the issue can be reproduced. To build the image, open a terminal in the repo root (where you will see the `Debian.Dockerfile`). Run the below command to build the image.
 
->docker build -t apploader -f .\Debian.Dockerfile .
-
+```bash
+> docker build -t apploader -f .\Debian.Dockerfile .
+```
 List all images
->docker images
-
+```bash
+> docker images
+```
 Run the container from the newly created image.
 
->docker run -p 8080:80 {imageid}
-
+```bash
+> docker run -p 8080:80 {imageid}
+```
 
 ### Docker image for testing Windows
 
@@ -22,4 +25,14 @@ https://github.com/kshyju/DotnetAppLoader/blob/517dc3dfb91004b23e006815fb3c93570
 
 To test, publish both apps. Execute "FunctionsNetHost.exe" and pass the assembly path of the SampleApp publish/build output.
 
+Publishing DotnetAppLoader/FunctionsNetHost
 
+```bash
+> dotnet publish -c release -r win-x64 -o C:\Temp\app\dotnetapploader
+```
+
+Publishing the sample app to "C:\Temp\app\sampleapp"
+
+```bash
+> dotnet publish -c release -r win-x64 -o C:\Temp\app\sampleapp --no-self-contained
+```
