@@ -13,12 +13,12 @@ namespace SampleApp
         public static NativeHost GetNativeHostData()
         {
             IntPtr mainExecutableHandle = NativeLibrary.GetMainProgramHandle();
-            Logger.LogInfo($" mainExecutable: {mainExecutableHandle}");
+            Logger.LogInfo($"MainProgramHandle: {mainExecutableHandle}");
 
             var getPropPtr = NativeLibrary.GetExport(mainExecutableHandle, "get_application_properties");
             Logger.LogInfo($"get_application_properties address: {getPropPtr}");
 
-            // Create a delegate for the "get_prop" method
+            // Create a delegate for the "get_application_properties" method
             var getPropMethod = Marshal.GetDelegateForFunctionPointer<GetPropDelegate>(getPropPtr);
 
             var hostData = new NativeHost
@@ -36,7 +36,7 @@ namespace SampleApp
         }
     }
 
-    // Declare the delegate for the "get_prop" method
+    // Declare the delegate for the "get_application_properties" method
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int GetPropDelegate(NativeHost hostData);
 }
