@@ -2,7 +2,7 @@
 using FunctionsNetHost;
 using System.Runtime.InteropServices;
 
-internal sealed class AppLoader : IDisposable
+public sealed class AppLoader : IDisposable
 {
     private static readonly AppLoader _instance = new();
     private IntPtr _hostfxrHandle = IntPtr.Zero;
@@ -13,7 +13,7 @@ internal sealed class AppLoader : IDisposable
         LoadHostfxrLibrary();
     }
 
-    internal static AppLoader Instance => _instance;
+    public static AppLoader Instance => _instance;
 
     private void LoadHostfxrLibrary()
     {
@@ -32,12 +32,10 @@ internal sealed class AppLoader : IDisposable
             return;
         }
 
-        
         Logger.LogDebug($"hostfxr library loaded successfully.");
-
     }
 
-    internal int RunApplication(string assemblyPath)
+    public int RunApplication(string assemblyPath)
     {
         Logger.LogDebug($"Assembly path:{assemblyPath}. File exists:{File.Exists(assemblyPath)}");
 

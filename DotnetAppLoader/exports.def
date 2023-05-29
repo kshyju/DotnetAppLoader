@@ -1,3 +1,6 @@
-EXPORTS
-   get_application_properties
-   register_callbacks
+V1.0 {
+    global: _init; _fini;
+        get_application_properties;
+        register_callbacks;
+    local: *;
+};

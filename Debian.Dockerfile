@@ -65,13 +65,13 @@ EXPOSE 80
 ENV LD_LIBRARY_PATH="/app/dotnetapploader"
 
 # Prints the search path.
-ENV LD_DEBUG=libs
+#ENV LD_DEBUG=libs
 
 # Keep the app running so that we can inspect needed things in the container.Will not call the DllImport code path.
 #ENV DONTCRASH =1
 
 #  Update the system's dynamic linker cache
-RUN ldconfig
+#RUN ldconfig
 
 # Run the FunctionsNetHost application, pass the assembly name (SampleApp.dll) as the argument
 ENTRYPOINT ["./FunctionsNetHost", "./../sampleapp/SampleApp.dll"]

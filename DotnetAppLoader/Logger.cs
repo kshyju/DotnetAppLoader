@@ -1,19 +1,9 @@
-﻿using System.Globalization;
-
-namespace DotnetAppLoader
+﻿namespace DotnetAppLoader
 {
-    internal class Logger
+    internal static class Logger
     {
-        const string prefix = "";
-        public static void LogInfo(string message)
-        {
-            string ts = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-            Console.WriteLine($"{prefix}[{ts}] [DotnetAppLoader] {message}");
-        }
+        public static void LogInfo(string message) => Console.WriteLine($"[DotnetAppLoader] {message}");
 
-        internal static void LogDebug(string v)
-        {
-            LogInfo(v);
-        }
+        internal static void LogDebug(string v) => LogInfo(v);
     }
 }

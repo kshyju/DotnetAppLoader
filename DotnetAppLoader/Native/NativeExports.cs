@@ -20,7 +20,7 @@ namespace FunctionsNetHost
                 IntPtr pNativeApplication = gch.AddrOfPinnedObject();
                 nativeHostData.PNativeApplication = pNativeApplication;
 
-                return 1;
+                return 101;
             }
             catch (Exception ex)
             {

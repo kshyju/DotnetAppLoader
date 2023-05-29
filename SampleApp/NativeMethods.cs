@@ -10,22 +10,33 @@ namespace SampleApp
 
     internal static unsafe partial class NativeMethods
     {
-        // In windows platform, we need to set "FunctionsNetHost.exe";
-        private const string NativeWorkerDll = "FunctionsNetHost";
-
         public static NativeHost GetNativeHostData()
         {
-            var currentLdLibraryPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-            Console.WriteLine($" [SampleApp] LD_LIBRARY_PATH value: {currentLdLibraryPath}");
+            IntPtr mainExecutableHandle = NativeLibrary.GetMainProgramHandle();
+            Logger.LogInfo($" mainExecutable: {mainExecutableHandle}");
 
-            Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
+            var getPropPtr = NativeLibrary.GetExport(mainExecutableHandle, "get_application_properties");
+            Logger.LogInfo($"get_application_properties address: {getPropPtr}");
 
-            _ = get_application_properties(out var hostData);
+            // Create a delegate for the "get_prop" method
+            var getPropMethod = Marshal.GetDelegateForFunctionPointer<GetPropDelegate>(getPropPtr);
+
+            var hostData = new NativeHost
+            {
+                pNativeApplication = IntPtr.Zero // Set the required value for PNativeApplication
+            };
+
+            // Call the native method
+            int result = getPropMethod(hostData);
+
+            Logger.LogInfo("Result: " + result);
+            Logger.LogInfo("pNativeApplication address: " + hostData.pNativeApplication);
 
             return hostData;
         }
-
-        [DllImport(NativeWorkerDll, CharSet = CharSet.Auto)]
-        private static extern int get_application_properties(out NativeHost hostData);
     }
+
+    // Declare the delegate for the "get_prop" method
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    delegate int GetPropDelegate(NativeHost hostData);
 }
