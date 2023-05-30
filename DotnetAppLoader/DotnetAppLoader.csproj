@@ -6,9 +6,14 @@
     <AssemblyName>FunctionsNetHost</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
   </PropertyGroup>
+
+  <ItemGroup>
+    <CustomLinkerArg Include="-Wl,--export-dynamic" />
+  </ItemGroup>
 
   <PropertyGroup>
     <DefineConstants>$(FUNCTIONS_CONSTANTS)</DefineConstants>

@@ -8,10 +8,16 @@ namespace SampleApp
         public IntPtr pNativeApplication;
     }
 
-    internal static unsafe partial class NativeMethods
+    internal unsafe partial class NativeMethods
     {
-        public static NativeHost GetNativeHostData()
+        public NativeHost GetNativeHostData()
         {
+            var hostData = new NativeHost
+            {
+                pNativeApplication = IntPtr.Zero // Set the required value for PNativeApplication
+            };
+
+#if NET7_0
             IntPtr mainExecutableHandle = NativeLibrary.GetMainProgramHandle();
             Logger.LogInfo($"MainProgramHandle: {mainExecutableHandle}");
 
@@ -21,16 +27,16 @@ namespace SampleApp
             // Create a delegate for the "get_application_properties" method
             var getPropMethod = Marshal.GetDelegateForFunctionPointer<GetPropDelegate>(getPropPtr);
 
-            var hostData = new NativeHost
-            {
-                pNativeApplication = IntPtr.Zero // Set the required value for PNativeApplication
-            };
+
 
             // Call the native method
             int result = getPropMethod(hostData);
+#else
+            // Code for other cases (optional)
+            Console.WriteLine("This code executes in all other cases.");
+#endif
 
-            Logger.LogInfo("Result: " + result);
-            Logger.LogInfo("pNativeApplication address: " + hostData.pNativeApplication);
+
 
             return hostData;
         }

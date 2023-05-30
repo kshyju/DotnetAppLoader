@@ -20,7 +20,7 @@
                 }
             }
 
-            var nativeHostData = NativeMethods.GetNativeHostData();
+            var nativeHostData = new NativeMethods().GetNativeHostData();
 
             Logger.LogInfo($"NativeHost Application Ptr: {nativeHostData.pNativeApplication}");
         }
