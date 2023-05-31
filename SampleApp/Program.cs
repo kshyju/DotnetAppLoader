@@ -1,11 +1,12 @@
-﻿namespace SampleApp
+﻿using AppLibrary;
+
+namespace SampleApp
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            Logger.LogInfo($"AppDomain.CurrentDomain.BaseDirectory: {AppDomain.CurrentDomain.BaseDirectory}");
-            Logger.LogInfo($"Assembly Location: {typeof(Program).Assembly.Location}");
+            Logger.LogInfo($"Inside SampleApp Main");
 
             // If you want to inspect something from the environment before our code crashes, set this env variable
             // so that it runs this loop before calling CreateClient()
@@ -20,9 +21,11 @@
                 }
             }
 
-            var nativeHostData = new NativeMethods().GetNativeHostData();
+            Logger.LogInfo($"Before calling  Initializer.Init");
 
-            Logger.LogInfo($"NativeHost Application Ptr: {nativeHostData.pNativeApplication}");
+            Initializer.Init();
+
+            Logger.LogInfo($"After calling  Initializer.Init");
         }
     }
 }

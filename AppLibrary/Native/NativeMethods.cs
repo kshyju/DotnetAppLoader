@@ -1,6 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
-namespace SampleApp
+namespace AppLibrary
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct NativeHost
