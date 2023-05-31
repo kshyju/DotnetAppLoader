@@ -32,14 +32,11 @@ namespace AppLibrary
 
             // Call the native method
             int result = getPropMethod(hostData);
+             return hostData;
 #else
             // Code for other cases (optional)
-            Console.WriteLine("This code executes in all other cases.");
+            throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
 #endif
-
-
-
-            return hostData;
         }
     }
 
