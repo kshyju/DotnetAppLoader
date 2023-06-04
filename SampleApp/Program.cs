@@ -26,30 +26,7 @@ namespace SampleApp
 
             Initializer.Init();
 
-            Logger.LogInfo($"Environment.ProcessId: {Environment.ProcessId}");
-
-            var userEnvVars = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User);
-            PrintEnv(userEnvVars, "User");
-
-            var processEnvVars = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
-            PrintEnv(processEnvVars, "Process");
-
-            var machineEnvVars = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine);
-            PrintEnv(machineEnvVars, "Machine");
-
-           
             Logger.LogInfo($"After calling  Initializer.Init");
-        }
-
-        static void PrintEnv(IDictionary dictionary, string target)
-        {
-            foreach (DictionaryEntry var in dictionary)
-            {
-                if (var.Key.ToString().StartsWith("FUNCTIONS_"))
-                {
-                    Logger.LogInfo($" {target} - ENVIRONMENT VARIABLE : {var.Key}: {var.Value}");
-                }
-            }
         }
     }
 }

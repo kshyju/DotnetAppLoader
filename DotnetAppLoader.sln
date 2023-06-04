@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetAppLoader", "DotnetAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp", "SampleApp\SampleApp.csproj", "{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{642911EF-F36C-4102-A39F-3A9C3D06E2D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{642911EF-F36C-4102-A39F-3A9C3D06E2D7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppLibrary", "AppLibrary\AppLibrary.csproj", "{0793B694-2116-420A-8E9E-31BC64300012}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{AE72CC2D-A928-4061-93C7-C38DBFD4674A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A4CD61AF-E1C9-4D01-9B64-B33A3CF5CD4C} = {AE72CC2D-A928-4061-93C7-C38DBFD4674A}
+		{0793B694-2116-420A-8E9E-31BC64300012} = {AE72CC2D-A928-4061-93C7-C38DBFD4674A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4521658E-96C9-4426-9A52-00079EA46141}

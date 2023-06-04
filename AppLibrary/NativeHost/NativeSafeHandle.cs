@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks.Sources;
 
-namespace SampleApp
+namespace AppLibrary
 {
     internal sealed class NativeSafeHandle : SafeHandle, IValueTaskSource<object?>
     {

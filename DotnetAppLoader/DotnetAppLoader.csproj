@@ -15,9 +15,6 @@
   <!--<PropertyGroup>
     <DebuggerSupport Condition="'$(DebuggerSupport)' == '' and '$(Configuration)' != 'Debug'">false</DebuggerSupport>
   </PropertyGroup>-->
-  <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" />
-  </ItemGroup>
 
   <PropertyGroup>
     <DefineConstants>$(FUNCTIONS_CONSTANTS)</DefineConstants>
