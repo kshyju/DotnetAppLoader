@@ -11,6 +11,10 @@
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
+  <!--Dont see any size diff with below-->
+  <!--<PropertyGroup>
+    <DebuggerSupport Condition="'$(DebuggerSupport)' == '' and '$(Configuration)' != 'Debug'">false</DebuggerSupport>
+  </PropertyGroup>-->
   <ItemGroup>
     <CustomLinkerArg Include="-Wl,--export-dynamic" />
   </ItemGroup>

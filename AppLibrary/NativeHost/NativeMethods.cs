@@ -18,7 +18,7 @@ namespace AppLibrary
                 pNativeApplication = IntPtr.Zero // Set the required value for PNativeApplication
             };
 
-#if NET7_0
+#if NET7_0_OR_GREATER
             IntPtr mainExecutableHandle = NativeLibrary.GetMainProgramHandle();
             Logger.LogInfo($"MainProgramHandle: {mainExecutableHandle}");
 
@@ -35,7 +35,7 @@ namespace AppLibrary
              return hostData;
 #else
             // Code for other cases (optional)
-            throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
+            throw new PlatformNotSupportedException("Optimized cold start s not supported in current platform. Consider upgrading your function app to net7.0 or later.");
 #endif
         }
     }

@@ -1,5 +1,8 @@
-﻿class Program
+﻿using DotnetAppLoader;
+
+class Program
 {
+
     static int Main(string[] args)
     {
         if (args.Length == 0)
@@ -7,14 +10,24 @@
             Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
             return 1;
         }
+
+        Logger.LogInfo($"Args: {string.Join(" ", args)}");
+
         var workerAssemblyPath = args[0];
+
+        Logger.LogInfo($"Environment.ProcessId: {Environment.ProcessId}");
 
         using (var appLoader = AppLoader.Instance)
         {
             try
             {
-                appLoader.RunApplication(workerAssemblyPath);
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_FOO", "N_SetInNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_BAR", "N_SetInNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_WEB_FooBar", "N_UpdatedFromNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_FOO2", "N_SetInNative");
 
+                appLoader.RunApplication(workerAssemblyPath);
             }
             catch (Exception ex)
             {
