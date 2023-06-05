@@ -11,22 +11,10 @@ namespace AppLibrary
         public IntPtr pNativeApplication;
     }
 
-
-
     internal static unsafe partial class NativeMethods
     {
         static NativeMethods()
         {
-            var downloadDirectory = @"/mnt/c/Temp/app/dotnetapploader";
-           // AddDllDirectory(downloadDirectory);
-          //  Logger.LogInfo($"AddDllDirectory called with:{downloadDirectory}");
-
-            string runtimeDirectory = RuntimeEnvironment.GetRuntimeDirectory();
-            string libraryPath = Path.Combine(downloadDirectory, "FunctionsNetHost");
-
-            // Load the library
-            IntPtr libraryHandle = NativeLibrary.Load(libraryPath);
-            Logger.LogInfo($"libraryHandle:{libraryHandle}");
             NativeLibrary.SetDllImportResolver(typeof(Initializer).Assembly, ImportResolver);
         }
         // In windows platform, we need to set "FunctionsNetHost.exe";
@@ -34,12 +22,12 @@ namespace AppLibrary
 
         public static NativeHost GetNativeHostData()
         {
-            var currentLdLibraryPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-            Console.WriteLine($" [SampleApp] LD_LIBRARY_PATH value: {currentLdLibraryPath}");
 
-            Console.WriteLine(" [SampleApp] About to call get_application_properties from SampleApp.");
+            Logger.LogInfo("About to call get_application_properties from SampleApp.");
 
             _ = get_application_properties(out var hostData);
+
+            Logger.LogInfo("After calling get_application_properties from SampleApp.");
 
             return hostData;
         }
@@ -47,8 +35,6 @@ namespace AppLibrary
         [DllImport(NativeWorkerDll, CharSet = CharSet.Auto)]
         private static extern int get_application_properties(out NativeHost hostData);
 
-        [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-        static extern int AddDllDirectory(string NewDirectory);
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
@@ -57,10 +43,15 @@ namespace AppLibrary
             {
                 Logger.LogInfo($"ImportResolver: libraryName:{libraryName}");
 
-                var path = @"/mnt/c/Temp/app/dotnetapploader/FunctionsNetHost";
-               // Logger.LogInfo($"ImportResolver: path:{path}");
-                // Try using the system library 'libmylibrary.so.5'
-                NativeLibrary.TryLoad(NativeWorkerDll, out libHandle);
+#if NET7_0_OR_GREATER
+
+                var h = NativeLibrary.GetMainProgramHandle();
+                Logger.LogInfo($"ImportResolver: GetMainProgramHandle:{h}");
+                return h;
+#else
+            throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
+#endif
+
             }
 
             return libHandle;
