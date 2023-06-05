@@ -17,7 +17,7 @@
   </PropertyGroup>-->
 
   <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" />
+    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Windows`))' == 'false' " />
   </ItemGroup>
   
   <PropertyGroup>
