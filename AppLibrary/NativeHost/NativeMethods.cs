@@ -22,7 +22,6 @@ namespace AppLibrary
 
         public static NativeHost GetNativeHostData()
         {
-
             Logger.LogInfo("About to call get_application_properties from SampleApp.");
 
             _ = get_application_properties(out var hostData);
@@ -49,7 +48,7 @@ namespace AppLibrary
                 Logger.LogInfo($"ImportResolver: GetMainProgramHandle:{h}");
                 return h;
 #else
-            throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
+                throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
 #endif
 
             }
