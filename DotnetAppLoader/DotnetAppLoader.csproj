@@ -11,6 +11,8 @@
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
+  <!--Below is needed to tell linker to include our exported functions in net7.0.-->
+  <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
   <ItemGroup>
     <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Windows`))' == 'false' " />
   </ItemGroup>

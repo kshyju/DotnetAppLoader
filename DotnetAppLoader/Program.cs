@@ -17,15 +17,12 @@ class Program
 
         Logger.LogInfo($"Environment.ProcessId: {Environment.ProcessId}");
 
-        using (var appLoader = AppLoader.Instance)
+        using (var appLoader = new AppLoader())
         {
             try
             {
                 EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_BAR", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_WEBAPP_FooBar", "N_UpdatedFromNative");
                 EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO2", "N_SetInNative");
 
                 appLoader.RunApplication(workerAssemblyPath);
             }

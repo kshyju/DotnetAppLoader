@@ -2,18 +2,16 @@
 using FunctionsNetHost;
 using System.Runtime.InteropServices;
 
-public sealed class AppLoader : IDisposable
+internal sealed class AppLoader : IDisposable
 {
     private static readonly AppLoader _instance = new();
     private IntPtr _hostfxrHandle = IntPtr.Zero;
     private bool _disposed;
 
-    private AppLoader()
+    internal AppLoader()
     {
         LoadHostfxrLibrary();
     }
-
-    public static AppLoader Instance => _instance;
 
     private void LoadHostfxrLibrary()
     {
