@@ -22,11 +22,25 @@ namespace SampleApp
                 }
             }
 
-            Logger.LogInfo($"Before calling  Initializer.Init");
-
             Initializer.Init();
 
-            Logger.LogInfo($"After calling  Initializer.Init");
+            var allEnvVars = Environment.GetEnvironmentVariables();
+            Print(allEnvVars);
+        }
+
+        private static void Print(IDictionary dictionary)
+        {
+            Logger.LogInfo($"Printing all EnvironmentVariables starts with FUNCTIONS_");
+
+            foreach (DictionaryEntry item in dictionary)
+            {
+                if (item.Key.ToString().StartsWith("FUNCTIONS_") == false)
+                {
+                    continue;
+                }
+
+                Logger.LogInfo($"ENV VARIABLE {item.Key}:{item.Value}");
+            }
         }
     }
 }

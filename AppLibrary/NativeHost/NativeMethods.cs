@@ -22,11 +22,7 @@ namespace AppLibrary
 
         public static NativeHost GetNativeHostData()
         {
-            Logger.LogInfo("About to call get_application_properties from SampleApp.");
-
             _ = get_application_properties(out var hostData);
-
-            Logger.LogInfo("After calling get_application_properties from SampleApp.");
 
             return hostData;
         }
@@ -40,12 +36,9 @@ namespace AppLibrary
             IntPtr libHandle = IntPtr.Zero;
             if (libraryName == NativeWorkerDll)
             {
-                Logger.LogInfo($"ImportResolver: libraryName:{libraryName}");
-
 #if NET7_0_OR_GREATER
 
                 var h = NativeLibrary.GetMainProgramHandle();
-                Logger.LogInfo($"ImportResolver: GetMainProgramHandle:{h}");
                 return h;
 #else
                 throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");

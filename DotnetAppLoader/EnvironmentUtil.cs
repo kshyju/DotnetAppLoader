@@ -13,11 +13,13 @@ namespace DotnetAppLoader
 
         internal static void SetEnvVar(string name, string value)
         {
-#if LINUX
-            setenv(name, value, 1);
-#else
             Environment.SetEnvironmentVariable(name, value);
-#endif
+
+//#if LINUX
+//            setenv(name, value, 1);
+//#else
+//            Environment.SetEnvironmentVariable(name, value);
+//#endif
         }
     }
 }

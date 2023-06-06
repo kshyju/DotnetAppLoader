@@ -40,9 +40,9 @@ namespace WebApp.Controllers
 
             var envDict = new Dictionary<string, string>()
             {
-                { "FUNCTIONS_WEB_BazWeb","W-BazWeb_FromWebAppDuringProcessStart" },
-                { "FUNCTIONS_WEB_FooBar","W-BarFoo_FromWebAppDuringProcessStart" },
-                {"FUNCTIONS_APPLICATION_DIRECTORY","W-FuncAppDirFromWebAppDuringProcessStart" }
+                { "FUNCTIONS_WEBAPP_BazWeb","W-BazWeb_FromWebAppDuringProcessStart" },
+                { "FUNCTIONS_WEBAPP_FooBar","W-BarFoo_FromWebAppDuringProcessStart" },
+                { "FUNCTIONS_APPLICATION_DIRECTORY","W-FuncAppDirFromWebAppDuringProcessStart" }
             };
 
             StartProcess(path, dir, dllPath, envDict);

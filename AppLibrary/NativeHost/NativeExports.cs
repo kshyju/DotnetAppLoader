@@ -17,8 +17,6 @@ namespace AppLibrary
         [UnmanagedCallersOnly(EntryPoint = "get_application_properties")]
         public static int GetApplicationProperties(NativeHostData nativeHostData)
         {
-            Logger.LogInfo("NativeExports.GetApplicationProperties method invoked.");
-
             try
             {
                 var nativeHostApplication = NativeHostApplication.Instance;
@@ -40,7 +38,6 @@ namespace AppLibrary
                                                 delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
             IntPtr grpcHandler)
         {
-            Logger.LogInfo("NativeExports.RegisterCallbacks method invoked.");
 
             try
             {

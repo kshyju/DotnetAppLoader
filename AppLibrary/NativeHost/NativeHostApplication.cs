@@ -20,8 +20,6 @@ namespace AppLibrary
             _requestHandlerCallback = callback;
             _workerHandle = grpcHandle;
 
-            Console.WriteLine("SetCallbackHandles invoked");
-
         }
     }
 }

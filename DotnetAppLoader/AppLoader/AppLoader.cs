@@ -23,22 +23,16 @@ public sealed class AppLoader : IDisposable
         // export COREHOST_TRACE=1
 
         var hostfxrFullPath = PathResolver.GetHostFxrPath();
-        Logger.LogDebug($"hostfxrFullPath:{hostfxrFullPath}");
-
         _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
         if (_hostfxrHandle == IntPtr.Zero)
         {
             Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
             return;
         }
-
-        Logger.LogDebug($"hostfxr library loaded successfully.");
     }
 
     public int RunApplication(string assemblyPath)
     {
-        Logger.LogDebug($"Assembly path:{assemblyPath}. File exists:{File.Exists(assemblyPath)}");
-
         unsafe
         {
             var parameters = new HostFxr.hostfxr_initialize_parameters
@@ -60,8 +54,6 @@ public sealed class AppLoader : IDisposable
                 return error;
             }
                         
-            Logger.LogDebug($"Before calling HostFxr.Run() with hostContextHandle:{hostContextHandle}");
-
             return HostFxr.Run(hostContextHandle);
         }
     }
@@ -84,7 +76,6 @@ public sealed class AppLoader : IDisposable
             if (_hostfxrHandle != IntPtr.Zero)
             {
                 NativeLibrary.Free(_hostfxrHandle);
-                Logger.LogInfo($"Freed hostfxr library handle");
                 _hostfxrHandle = IntPtr.Zero;
             }
 

@@ -21,11 +21,11 @@ class Program
         {
             try
             {
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_FOO", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_BAR", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_WEB_FooBar", "N_UpdatedFromNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO", "N_SetInNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_BAR", "N_SetInNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_WEBAPP_FooBar", "N_UpdatedFromNative");
                 EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NAT_FOO2", "N_SetInNative");
+                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO2", "N_SetInNative");
 
                 appLoader.RunApplication(workerAssemblyPath);
             }
