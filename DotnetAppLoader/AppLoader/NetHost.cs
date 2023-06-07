@@ -2,7 +2,7 @@
 
 namespace DotnetAppLoader
 {
-    public class NetHost
+    internal class NetHost
     {
         [DllImport("nethost", CharSet = CharSet.Auto)]
         private static extern int get_hostfxr_path(
@@ -10,9 +10,9 @@ namespace DotnetAppLoader
         [In] ref int buffer_size,
         IntPtr reserved);
 
-        public static string GetHostFxrPath()
+        internal static string GetHostFxrPath()
         {
-            char[] buffer = new char[500];
+            char[] buffer = new char[200];
             int buffer_size = buffer.Length;
 
             int rc = get_hostfxr_path(buffer, ref buffer_size, IntPtr.Zero);
