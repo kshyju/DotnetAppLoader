@@ -20,7 +20,9 @@ internal sealed class AppLoader : IDisposable
         // In Unix environment, you need to run the below command in the terminal to set the environment variable.
         // export COREHOST_TRACE=1
 
-        var hostfxrFullPath = PathResolver.GetHostFxrPath();
+        var hostfxrFullPath = NetHost.GetHostFxrPath();
+        Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
+
         _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
         if (_hostfxrHandle == IntPtr.Zero)
         {

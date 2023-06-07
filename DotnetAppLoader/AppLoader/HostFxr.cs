@@ -2,6 +2,7 @@
 
 namespace DotnetAppLoader
 {
+
     static partial class HostFxr
     {
         public unsafe struct hostfxr_initialize_parameters
