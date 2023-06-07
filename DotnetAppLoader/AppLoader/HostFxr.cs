@@ -2,6 +2,32 @@
 
 namespace DotnetAppLoader
 {
+    public class NativeMethods
+    {
+        //  [DllImport("hostfxr", CharSet = CharSet.Ansi, ExactSpelling = true)]
+        [DllImport("nethost", CharSet = CharSet.Auto)]
+        private static extern int get_hostfxr_path(
+        [Out] char[] buffer,
+        [In, Out] ref int buffer_size,
+        IntPtr reserved);
+
+        public static string GetHostFxrPath()
+        {
+            char[] buffer = new char[500];
+            int buffer_size = buffer.Length;
+
+            // Call the get_hostfxr_path function
+            int rc = get_hostfxr_path(buffer, ref buffer_size, IntPtr.Zero);
+
+            if (rc != 0)
+            {
+                throw new InvalidOperationException("Failed to get the hostfxr path.");
+            }
+
+            return new string(buffer, 0, buffer_size - 1);
+        }
+    }
+
     static partial class HostFxr
     {
         public unsafe struct hostfxr_initialize_parameters
@@ -10,6 +36,9 @@ namespace DotnetAppLoader
             public char* host_path;
             public char* dotnet_root;
         };
+
+        //[LibraryImport("hostfxr", EntryPoint = "get_hostfxr_path")]
+        //public unsafe static partial int Initialize()
 
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_initialize_for_dotnet_command_line")]
         public unsafe static partial int Initialize(

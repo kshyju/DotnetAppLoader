@@ -7,50 +7,125 @@ namespace FunctionsNetHost
 {
     internal static partial class PathResolver
     {
-        private static string? _hostFxrPath;
+        private static Dictionary<string, string>? _hostFxrPathDictionary;
 
-        internal static string GetHostFxrPath()
+        private static void Print(Dictionary<string, string> dict)
         {
-            if (_hostFxrPath != null)
+            Logger.LogInfo($"dict.Count: {dict.Count}");
+            foreach (var kvp in dict)
             {
-                return _hostFxrPath;
+                Logger.LogInfo($" {kvp.Key}: {kvp.Value}");
             }
+        }
+
+        internal static string GetHostFxrPath(string targetFrameworkVersion)
+        {
+            Logger.LogInfo($"targetFrameworkVersion:{targetFrameworkVersion}");
+            if (_hostFxrPathDictionary is null)
+            {
 #if LINUX
-            _hostFxrPath = GetUnixHostFxrPath();
+                _hostFxrPathDictionary = GetUnixHostFxrPaths();
 #else
-            _hostFxrPath = GetWindowsHostFxrPath();
+                _hostFxrPathDictionary = GetWindowsHostFxrPaths();
 #endif
-            if (!File.Exists(_hostFxrPath))
-            {
-                throw new FileNotFoundException(_hostFxrPath);
             }
 
-            return _hostFxrPath;
-        }
+            Print(_hostFxrPathDictionary);
 
-        /// <summary>
-        /// The hostfxr root folder has multiple child directories, one for each .net SDK version installed.
-        /// We will get the latest one.
-        /// </summary>
-        /// <param name="hostFxrVersionsDirPath"></param>
-        /// <returns></returns>
-        private static string GetLatestVersion(string hostFxrVersionsDirPath)
-        {
-            var versions = Directory.GetDirectories(hostFxrVersionsDirPath, "*", SearchOption.TopDirectoryOnly);
-            if (!ShouldUseDotNetPreviewVersions())
+            var majorVersion = GetMajorVersion(targetFrameworkVersion);
+            if (_hostFxrPathDictionary.TryGetValue(majorVersion, out var hostFxrFullPath))
             {
-                versions = versions.Where(f => !f.Contains("-preview", StringComparison.OrdinalIgnoreCase)).ToArray();
+                return hostFxrFullPath;
             }
 
-            Array.Sort(versions);
-            var latestVersion = Path.GetFileName(versions[^1]);
+            throw new PlatformNotSupportedException($"No hostfxr found for the tfm:{targetFrameworkVersion}");
+        }
+        
+        private static string GetMajorVersion(string versionString)
+        {
+            string[] parts = versionString.Split('.');
+            if (parts.Length > 0)
+            {
+                return parts[0];
+            }
 
-            return latestVersion;
+            throw new InvalidOperationException(
+                $"Expected a version string in {{major}}.{{minor}} format. Received:{versionString}");
+        }
+        
+        private static Dictionary<string, string> GetHostFxPathsForAllVersions(string hostFxrRoot, string hostfxrDll)
+        {
+            var directoryPaths = Directory.GetDirectories(hostFxrRoot, "*", SearchOption.TopDirectoryOnly);
+            Logger.LogInfo($"hostFxrRoot:{hostFxrRoot}, Child directory count:{directoryPaths.Length}");
+
+            var latest = GetMajorVersionPaths(directoryPaths);
+            
+            // Update the value of each dictionary entry to append the dll name.
+            foreach (var versionEntry in latest)
+            {
+                var versionDir = versionEntry.Value;
+                var versionDllPath = Path.Combine(versionDir, hostfxrDll);
+                latest[versionEntry.Key] = Path.GetFullPath(versionDllPath);
+            }
+
+            return latest;
         }
 
-        private static bool ShouldUseDotNetPreviewVersions()
+        private static Dictionary<string, string> GetMajorVersionPaths(string[] directoryPaths)
         {
-            return false;
+            var dict = new Dictionary<string, string>();
+
+            foreach (var path in directoryPaths)
+            {
+                var version = GetVersionFromPath(path);
+                var majorVersion = GetMajorVersion(version);
+
+                if (dict.TryGetValue(majorVersion, out var currentPath))
+                {
+                    var currentVersion = GetVersionFromPath(currentPath);
+                    if (IsHigherVersion(version, currentVersion))
+                    {
+                        dict[majorVersion] = path;
+                    }
+                }
+                else
+                {
+                    dict.Add(majorVersion, path);
+                }
+            }
+
+            return dict;
+        }
+
+
+        private static bool IsHigherVersion(string version1, string version2)
+        {
+            // Rule 2: If both versions can be parsed to Version instances, use that for comparison
+            if (Version.TryParse(version1, out var v1) && Version.TryParse(version2, out var v2))
+            {
+                return v1 > v2;
+            }
+
+            bool hasPreview1 = version1.IndexOf("preview", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool hasPreview2 = version2.IndexOf("preview", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            // Rule 1: If either version has "preview", return the one without "preview"
+            if (hasPreview1 && !hasPreview2)
+            {
+                return false;
+            }
+            else if (!hasPreview1 && hasPreview2)
+            {
+                return true;
+            }
+
+            // Default comparison: Use string comparison
+            return string.Compare(version1, version2, StringComparison.OrdinalIgnoreCase) > 0;
+        }
+
+        private static string GetVersionFromPath(string path)
+        {
+            return Path.GetFileName(path);
         }
     }
 }

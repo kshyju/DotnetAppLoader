@@ -24,8 +24,8 @@ namespace SampleApp
 
             Initializer.Init();
 
-            var allEnvVars = Environment.GetEnvironmentVariables();
-            Print(allEnvVars);
+            //var allEnvVars = Environment.GetEnvironmentVariables();
+            //Print(allEnvVars);
         }
 
         private static void Print(IDictionary dictionary)

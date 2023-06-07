@@ -2,35 +2,25 @@
 using FunctionsNetHost;
 using System.Runtime.InteropServices;
 
-internal sealed class AppLoader : IDisposable
+internal sealed class AppLoader
 {
-    private static readonly AppLoader _instance = new();
-    private IntPtr _hostfxrHandle = IntPtr.Zero;
-    private bool _disposed;
-
-    internal AppLoader()
+    public int RunApplication(string assemblyPath, string tfm)
     {
-        LoadHostfxrLibrary();
-    }
+        //var hostfxrFullPath = PathResolver.GetHostFxrPath(tfm);
+        //Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
 
-    private void LoadHostfxrLibrary()
-    {
-        // If having problems with the managed host, enable the following:
-        //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
-        // In Unix environment, you need to run the below command in the terminal to set the environment variable.
-        // export COREHOST_TRACE=1
+        var hostfxrFullPath = NativeMethods.GetHostFxrPath();
+        Logger.LogInfo($"hostFxr2: {hostfxrFullPath}");
 
-        var hostfxrFullPath = PathResolver.GetHostFxrPath();
-        _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
-        if (_hostfxrHandle == IntPtr.Zero)
+        var hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
+        if (hostfxrHandle == IntPtr.Zero)
         {
             Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
-            return;
+            return 0;
         }
-    }
-
-    public int RunApplication(string assemblyPath)
-    {
+        
+        Logger.LogInfo($"hostfxr loaded successfully.");
+        
         unsafe
         {
             var parameters = new HostFxr.hostfxr_initialize_parameters
@@ -51,33 +41,9 @@ internal sealed class AppLoader : IDisposable
             {
                 return error;
             }
-                        
+            Logger.LogInfo($"HostFxr.Initialize done. hostContextHandle:{hostContextHandle}");
+
             return HostFxr.Run(hostContextHandle);
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (!disposing)
-            {
-                return;
-            }
-
-            if (_hostfxrHandle != IntPtr.Zero)
-            {
-                NativeLibrary.Free(_hostfxrHandle);
-                _hostfxrHandle = IntPtr.Zero;
-            }
-
-            _disposed = true;
         }
     }
 }

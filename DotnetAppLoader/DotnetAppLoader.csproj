@@ -14,7 +14,10 @@
   <!--Below is needed to tell linker to include our exported functions in net7.0.-->
   <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
   <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Windows`))' == 'false' " />
+    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' " />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
   </ItemGroup>
   
   <PropertyGroup>

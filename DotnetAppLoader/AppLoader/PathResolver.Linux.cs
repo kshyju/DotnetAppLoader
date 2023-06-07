@@ -8,25 +8,18 @@ namespace FunctionsNetHost
         private static string GetUnixDotnetRootPath()
         {
             return Path.Combine($"{Path.DirectorySeparatorChar}usr",
-                                               "share",
-                                               "dotnet");
+                "share",
+                "dotnet");
         }
 
         ///Example path: usr/share/dotnet/host/fxr/7.0.5
-        private static string GetUnixHostFxrPath()
+        private static Dictionary<string, string> GetUnixHostFxrPaths()
         {
-            string hostFxrVersionsDirPath = Path.Combine(GetUnixDotnetRootPath(),
-                                               "host",
-                                               "fxr");
+            var hostFxrRoot = Path.Combine(GetUnixDotnetRootPath(),
+                "host",
+                "fxr");
 
-            var latestVersion = GetLatestVersion(hostFxrVersionsDirPath);
-
-            string hostfxrPath = Path.Combine(
-                hostFxrVersionsDirPath,
-                latestVersion,
-                "libhostfxr.so");
-
-            return Path.GetFullPath(hostfxrPath);
+            return GetHostFxPathsForAllVersions(hostFxrRoot, "libhostfxr.so");
         }
     }
 }

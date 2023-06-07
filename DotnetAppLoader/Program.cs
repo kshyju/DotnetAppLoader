@@ -2,12 +2,12 @@
 
 class Program
 {
-
     static int Main(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
+            Console.WriteLine(
+                "Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
             return 1;
         }
 
@@ -17,29 +17,29 @@ class Program
 
         Logger.LogInfo($"Environment.ProcessId: {Environment.ProcessId}");
 
-        using (var appLoader = new AppLoader())
+        var appLoader = new AppLoader();
+
+        try
         {
-            try
-            {
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
+            EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO", "N_SetInNative");
+            EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
 
-                appLoader.RunApplication(workerAssemblyPath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error calling RunApplication from Main.", ex);
+            var tfm = "7.0";
+            appLoader.RunApplication(workerAssemblyPath, tfm);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error calling RunApplication from Main.{ex}" );
 
-                // Keep it running if we want to login to container and inspect something.
-                var counter = 0;
-                while (counter < 10000)
+            // Keep it running if we want to login to container and inspect something.
+            var counter = 0;
+            while (counter < 5)
+            {
+                counter++;
+                Thread.Sleep(1000);
+                //if (counter % 10 == 0)
                 {
-                    counter++;
-                    Thread.Sleep(1000);
-                    //if (counter % 10 == 0)
-                    {
-                        Console.WriteLine(counter);
-                    }
+                    Console.WriteLine(counter);
                 }
             }
         }

@@ -13,21 +13,14 @@ namespace FunctionsNetHost
         }
 
         // Example: C:\Program Files\dotnet\host\fxr\7.0.5
-        private static string GetWindowsHostFxrPath()
+        private static Dictionary<string, string> GetWindowsHostFxrPaths()
         {
-            string hostFxrVersionsDirPath = Path.Combine(
+            string hostFxrRoot = Path.Combine(
                 GetWindowsDotnetRootPath(),
                 "host",
                 "fxr");
 
-            var latestVersion = GetLatestVersion(hostFxrVersionsDirPath);
-
-            string hostfxrPath = Path.Combine(
-                hostFxrVersionsDirPath,
-                latestVersion,
-                "hostfxr.dll");
-
-            return Path.GetFullPath(hostfxrPath);
+            return GetHostFxPathsForAllVersions(hostFxrRoot, "hostfxr.dll");
         }
     }
 }
