@@ -29,10 +29,13 @@ internal sealed class AppLoader : IDisposable
             Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
             return;
         }
+        Logger.LogInfo($"hostfxr loaded successfully");
     }
 
     public int RunApplication(string assemblyPath)
     {
+        Logger.LogInfo($"{assemblyPath} file.Exists:{File.Exists(assemblyPath)}");
+
         unsafe
         {
             var parameters = new HostFxr.hostfxr_initialize_parameters

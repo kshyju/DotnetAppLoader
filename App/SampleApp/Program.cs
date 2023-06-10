@@ -15,7 +15,7 @@ namespace SampleApp
 
             if (dontCrashEnvVarValue != null)
             {
-                for (var i = 1; i <= 5000; i++)
+                for (var i = 1; i <= 5; i++)
                 {
                     Logger.LogInfo(" - " + i);
                     Thread.Sleep(1000);

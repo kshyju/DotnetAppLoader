@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -17,7 +16,7 @@ namespace AppLibrary
         {
             NativeLibrary.SetDllImportResolver(typeof(Initializer).Assembly, ImportResolver);
         }
-        // In windows platform, we need to set "FunctionsNetHost.exe";
+
         private const string NativeWorkerDll = "FunctionsNetHost";
 
         public static NativeHost GetNativeHostData()
@@ -33,20 +32,32 @@ namespace AppLibrary
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
-            IntPtr libHandle = IntPtr.Zero;
             if (libraryName == NativeWorkerDll)
             {
-#if NET7_0_OR_GREATER
-
-                var h = NativeLibrary.GetMainProgramHandle();
-                return h;
+#if NET6_0
+                if (OperatingSystem.IsWindows())
+                {
+                    Logger.LogInfo("NET6 0 and OperatingSystem.IsWindows");
+                    return NativeLibraryWindows.GetMainProgramHandle();
+                }
+                else if (OperatingSystem.IsLinux())
+                {
+                    Logger.LogInfo("NET6 0 and OperatingSystem.IsLinux");
+                    return NativeLibraryLinux.GetMainProgramHandle();
+                }
+                else
+                {
+                    throw new PlatformNotSupportedException("Not supported in this platform. Consider upgrading your project to .NET 7.0 or later.");
+                }
+#elif NET7_0_OR_GREATER
+                Logger.LogInfo("NET7_0_OR_GREATER");
+                return NativeLibrary.GetMainProgramHandle();
 #else
-                throw new PlatformNotSupportedException("Interop communication with native layer is not supported in current platform. Consider upgrading your project to net7.0 or later.");
+        throw new PlatformNotSupportedException("Interop communication with native layer is not supported in the current platform. Consider upgrading your project to .NET 7.0 or later.");
 #endif
-
             }
 
-            return libHandle;
+            return IntPtr.Zero;
         }
     }
 }

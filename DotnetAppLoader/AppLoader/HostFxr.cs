@@ -16,7 +16,7 @@ namespace DotnetAppLoader
         public unsafe static partial int Initialize(
                 int argc,
                 [MarshalAs(UnmanagedType.LPArray, ArraySubType = 
-#if LINUX
+#if OS_LINUX
     UnmanagedType.LPStr
 #else
      UnmanagedType.LPWStr
@@ -31,13 +31,13 @@ namespace DotnetAppLoader
 
         [LibraryImport("hostfxr", EntryPoint = "hostfxr_set_runtime_property_value")]
         public static partial int SetAppContextData(IntPtr host_context_handle, [MarshalAs(
-#if LINUX
+#if OS_LINUX
     UnmanagedType.LPStr
 #else
      UnmanagedType.LPWStr
 #endif
             )] string name, [MarshalAs(
-#if LINUX
+#if OS_LINUX
     UnmanagedType.LPStr
 #else
      UnmanagedType.LPWStr
