@@ -18,7 +18,7 @@
   </ItemGroup>
   
   <PropertyGroup>
-    <DefineConstants>$(FUNCTIONS_CONSTANTS)</DefineConstants>
+    <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
