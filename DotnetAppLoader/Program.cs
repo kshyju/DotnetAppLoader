@@ -1,9 +1,9 @@
 ﻿using DotnetAppLoader;
+using DotnetAppLoader.AppLoader;
 
 class Program
 {
-
-    static int Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
         if (args.Length == 0)
         {
@@ -11,19 +11,17 @@ class Program
             return 1;
         }
 
-        Logger.LogInfo($"Args: {string.Join(" ", args)}");
-
         var workerAssemblyPath = args[0];
-
-        Logger.LogInfo($"Environment.ProcessId: {Environment.ProcessId}");
 
         using (var appLoader = new AppLoader())
         {
             try
             {
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_NATIVE_FOO", "N_SetInNative");
-                EnvironmentUtil.SetEnvVar("FUNCTIONS_APPLICATION_DIRECTORY", "N-UpdatedFromNative");
 
+                Preloader.Preload();
+
+                await Task.Delay(2000);
+                Logger.LogInfo($"Aboug to call RunApplication for assembly:{workerAssemblyPath}");
                 appLoader.RunApplication(workerAssemblyPath);
             }
             catch (Exception ex)

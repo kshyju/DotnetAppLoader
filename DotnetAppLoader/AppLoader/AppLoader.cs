@@ -61,6 +61,12 @@ internal sealed class AppLoader : IDisposable
         }
     }
 
+    private void PrePageAssemblies()
+    {
+        var assemblies = new string[] { "" };
+
+    }
+
     public void Dispose()
     {
         Dispose(true);

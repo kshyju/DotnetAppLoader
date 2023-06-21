@@ -1,5 +1,8 @@
 ﻿using AppLibrary;
+using Microsoft.Extensions.Configuration;
 using System.Collections;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SampleApp
 {
@@ -9,23 +12,12 @@ namespace SampleApp
         {
             Logger.LogInfo($"Inside SampleApp Main");
 
-            // If you want to inspect something from the environment before our code crashes, set this env variable
-            // so that it runs this loop before calling CreateClient()
-            var dontCrashEnvVarValue = Environment.GetEnvironmentVariable("DONTCRASH");
-
-            if (dontCrashEnvVarValue != null)
-            {
-                for (var i = 1; i <= 5; i++)
-                {
-                    Logger.LogInfo(" - " + i);
-                    Thread.Sleep(1000);
-                }
-            }
-
             Initializer.Init();
 
-            var allEnvVars = Environment.GetEnvironmentVariables();
-            Print(allEnvVars);
+            //var allEnvVars = Environment.GetEnvironmentVariables();
+            //Print(allEnvVars);
+
+            //Console.ReadLine();
         }
 
         private static void Print(IDictionary dictionary)

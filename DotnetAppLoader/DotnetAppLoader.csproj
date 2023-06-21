@@ -14,7 +14,7 @@
   <!--Below is needed to tell linker to include our exported functions in net7.0.-->
   <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
   <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' "/>
+    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' " />
   </ItemGroup>
   
   <PropertyGroup>
@@ -28,6 +28,7 @@
   <ItemGroup>
     <!-- This pulls in a couple of dlls/libs such as 
     nethost.dll, comhost.dll,nethost.lib,libnethost But all we really needs is nethost.dkk-->
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
   </ItemGroup>
   
