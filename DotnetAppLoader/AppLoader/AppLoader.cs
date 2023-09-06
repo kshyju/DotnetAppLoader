@@ -27,6 +27,8 @@ internal sealed class AppLoader : IDisposable
         // export COREHOST_TRACE=1
 
         var hostfxrFullPath = NetHost.GetHostFxrPath();
+        Logger.LogTrace($"Hostfxr path from NetHost:{hostfxrFullPath}");
+
         hostfxrFullPath = @"C:\Program Files\dotnet\host\fxr\6.0.16\hostfxr.dll";
         hostfxrFullPath = @"C:\Program Files (x86)\dotnet\host\fxr\7.0.10\hostfxr.dll";
         hostfxrFullPath = @"C:\Program Files (x86)\dotnet\host\fxr\8.0.0-preview.7.23375.6\hostfxr.dll";
