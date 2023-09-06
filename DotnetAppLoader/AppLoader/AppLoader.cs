@@ -27,11 +27,12 @@ internal sealed class AppLoader : IDisposable
         // export COREHOST_TRACE=1
 
         var hostfxrFullPath = NetHost.GetHostFxrPath();
-       // Logger.LogTrace($"hostfxr path:{hostfxrFullPath}");
         hostfxrFullPath = @"C:\Program Files\dotnet\host\fxr\6.0.16\hostfxr.dll";
         hostfxrFullPath = @"C:\Program Files (x86)\dotnet\host\fxr\7.0.10\hostfxr.dll";
+        hostfxrFullPath = @"C:\Program Files (x86)\dotnet\host\fxr\8.0.0-preview.7.23375.6\hostfxr.dll";
+        hostfxrFullPath = @"C:\Program Files\dotnet\host\fxr\8.0.0-preview.7.23375.6\hostfxr.dll";
 
-        Logger.LogTrace($"new hostfxr path x86:{hostfxrFullPath}");
+        Logger.LogTrace($"Hostfxr path :{hostfxrFullPath}");
 
         _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
         if (_hostfxrHandle == IntPtr.Zero)
@@ -46,6 +47,8 @@ internal sealed class AppLoader : IDisposable
     internal int RunApplication(string? assemblyPath)
     {
         ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
+
+        Logger.LogTrace($"RunApplication called with assemblyPath:{assemblyPath}");
 
         unsafe
         {
