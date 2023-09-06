@@ -1,11 +1,17 @@
-﻿using DotnetAppLoader;
-using FunctionsNetHost;
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using DotnetAppLoader;
 using System.Runtime.InteropServices;
 
+
+/// <summary>
+/// Manages loading hostfxr & worker assembly.
+/// </summary>
 internal sealed class AppLoader : IDisposable
 {
-    private static readonly AppLoader _instance = new();
     private IntPtr _hostfxrHandle = IntPtr.Zero;
+    private IntPtr _hostContextHandle = IntPtr.Zero;
     private bool _disposed;
 
     internal AppLoader()
@@ -16,25 +22,30 @@ internal sealed class AppLoader : IDisposable
     private void LoadHostfxrLibrary()
     {
         // If having problems with the managed host, enable the following:
-        //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+        // Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
         // In Unix environment, you need to run the below command in the terminal to set the environment variable.
         // export COREHOST_TRACE=1
 
         var hostfxrFullPath = NetHost.GetHostFxrPath();
-        Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
+       // Logger.LogTrace($"hostfxr path:{hostfxrFullPath}");
+        hostfxrFullPath = @"C:\Program Files\dotnet\host\fxr\6.0.16\hostfxr.dll";
+        hostfxrFullPath = @"C:\Program Files (x86)\dotnet\host\fxr\7.0.10\hostfxr.dll";
+
+        Logger.LogTrace($"new hostfxr path x86:{hostfxrFullPath}");
 
         _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
         if (_hostfxrHandle == IntPtr.Zero)
         {
-            Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
+            Logger.LogTrace($"Failed to load hostfxr. hostfxr path:{hostfxrFullPath}");
             return;
         }
-        Logger.LogInfo($"hostfxr loaded successfully");
+
+        Logger.LogTrace($"hostfxr library loaded successfully.");
     }
 
-    public int RunApplication(string assemblyPath)
+    internal int RunApplication(string? assemblyPath)
     {
-        Logger.LogInfo($"{assemblyPath} file.Exists:{File.Exists(assemblyPath)}");
+        ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
 
         unsafe
         {
@@ -43,12 +54,12 @@ internal sealed class AppLoader : IDisposable
                 size = sizeof(HostFxr.hostfxr_initialize_parameters)
             };
 
-            var error = HostFxr.Initialize(1, new[] { assemblyPath }, ref parameters, out var hostContextHandle);
+            var error = HostFxr.Initialize(1, new[] { assemblyPath }, ref parameters, out _hostContextHandle);
 
-            if (hostContextHandle == IntPtr.Zero)
+            if (_hostContextHandle == IntPtr.Zero)
             {
-                Logger.LogInfo(
-                    $"Failed to initialize the .NET Core runtime. assemblyPath:{assemblyPath}");
+                Logger.LogTrace(
+                    $"Failed to initialize the .NET Core runtime. Assembly path:{assemblyPath}");
                 return -1;
             }
 
@@ -56,8 +67,11 @@ internal sealed class AppLoader : IDisposable
             {
                 return error;
             }
-                        
-            return HostFxr.Run(hostContextHandle);
+
+            Logger.LogTrace($"hostfxr initialized with {assemblyPath}");
+            HostFxr.SetAppContextData(_hostContextHandle, "AZURE_FUNCTIONS_NATIVE_HOST", "1");
+
+            return HostFxr.Run(_hostContextHandle);
         }
     }
 
@@ -79,7 +93,15 @@ internal sealed class AppLoader : IDisposable
             if (_hostfxrHandle != IntPtr.Zero)
             {
                 NativeLibrary.Free(_hostfxrHandle);
+                Logger.LogTrace($"Freed hostfxr library handle");
                 _hostfxrHandle = IntPtr.Zero;
+            }
+
+            if (_hostContextHandle != IntPtr.Zero)
+            {
+                NativeLibrary.Free(_hostContextHandle);
+                Logger.LogTrace($"Freed hostcontext handle");
+                _hostContextHandle = IntPtr.Zero;
             }
 
             _disposed = true;

@@ -11,7 +11,7 @@ namespace FunctionsNetHost
         [UnmanagedCallersOnly(EntryPoint = "get_application_properties")]
         public static int GetApplicationProperties(NativeHostData nativeHostData)
         {
-            Logger.LogDebug("NativeExports.GetApplicationProperties method invoked.");
+            Logger.LogTrace("NativeExports.GetApplicationProperties method invoked.");
             
             try
             {
@@ -34,7 +34,7 @@ namespace FunctionsNetHost
                                                 delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
             IntPtr grpcHandler)
         {
-            Logger.LogDebug("NativeExports.RegisterCallbacks method invoked.");
+            Logger.LogTrace("NativeExports.RegisterCallbacks method invoked.");
             
             try
             {

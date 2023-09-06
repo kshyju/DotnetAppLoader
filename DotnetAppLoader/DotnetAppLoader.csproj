@@ -2,19 +2,21 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>FunctionsNetHost</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    <IlcExportUnmanagedEntrypoints>true</IlcExportUnmanagedEntrypoints>
   </PropertyGroup>
 
   <!--Below is needed to tell linker to include our exported functions in net7.0.-->
   <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
   <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' "/>
+    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' " />
   </ItemGroup>
   
   <PropertyGroup>
@@ -28,7 +30,7 @@
   <ItemGroup>
     <!-- This pulls in a couple of dlls/libs such as 
     nethost.dll, comhost.dll,nethost.lib,libnethost But all we really needs is nethost.dkk-->
-    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
+    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="8.0.0-preview.7.23375.6" />
   </ItemGroup>
   
 </Project>

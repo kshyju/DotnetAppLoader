@@ -4,6 +4,6 @@
     {
         public static void LogInfo(string message) => Console.WriteLine($"[DotnetAppLoader] {message}");
 
-        internal static void LogDebug(string v) => LogInfo(v);
+        internal static void LogTrace(string v) => LogInfo(v);
     }
 }
