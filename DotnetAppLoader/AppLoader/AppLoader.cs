@@ -6,6 +6,7 @@ internal sealed class AppLoader : IDisposable
 {
     private static readonly AppLoader _instance = new();
     private IntPtr _hostfxrHandle = IntPtr.Zero;
+    private IntPtr _hostContextHandle = IntPtr.Zero;
     private bool _disposed;
 
     internal AppLoader()
@@ -40,9 +41,9 @@ internal sealed class AppLoader : IDisposable
         {
             Logger.LogInfo($"About to call HostFxr.Initialize");
 
-            var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out var hostContextHandle);
+            var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 
-            if (hostContextHandle == IntPtr.Zero)
+            if (_hostContextHandle == IntPtr.Zero)
             {
                 Logger.LogInfo(
                     $"Failed to initialize the .NET Core runtime. assemblyPath:{assemblyPath}");
@@ -55,7 +56,7 @@ internal sealed class AppLoader : IDisposable
             }
 
             Logger.LogInfo($"About to call HostFxr.Run");
-            return HostFxr.Run(hostContextHandle);
+            return HostFxr.Run(_hostContextHandle);
         }
     }
 
@@ -77,7 +78,15 @@ internal sealed class AppLoader : IDisposable
             if (_hostfxrHandle != IntPtr.Zero)
             {
                 NativeLibrary.Free(_hostfxrHandle);
+                Logger.LogInfo($"Freed hostfxr library handle");
                 _hostfxrHandle = IntPtr.Zero;
+            }
+
+            if (_hostContextHandle != IntPtr.Zero)
+            {
+                HostFxr.Close(_hostContextHandle);
+                Logger.LogInfo($"Closed hostcontext handle");
+                _hostContextHandle = IntPtr.Zero;
             }
 
             _disposed = true;
