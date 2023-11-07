@@ -38,12 +38,9 @@ internal sealed class AppLoader : IDisposable
 
         unsafe
         {
-            var parameters = new HostFxr.hostfxr_initialize_parameters
-            {
-                size = sizeof(HostFxr.hostfxr_initialize_parameters)
-            };
+            Logger.LogInfo($"About to call HostFxr.Initialize");
 
-            var error = HostFxr.Initialize(1, new[] { assemblyPath }, ref parameters, out var hostContextHandle);
+            var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out var hostContextHandle);
 
             if (hostContextHandle == IntPtr.Zero)
             {
@@ -56,7 +53,8 @@ internal sealed class AppLoader : IDisposable
             {
                 return error;
             }
-                        
+
+            Logger.LogInfo($"About to call HostFxr.Run");
             return HostFxr.Run(hostContextHandle);
         }
     }
