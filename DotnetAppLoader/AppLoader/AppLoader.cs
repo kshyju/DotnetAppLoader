@@ -11,27 +11,27 @@ internal sealed class AppLoader : IDisposable
 
     internal AppLoader()
     {
-        LoadHostfxrLibrary();
+       // LoadHostfxrLibrary();
     }
 
-    private void LoadHostfxrLibrary()
-    {
-        // If having problems with the managed host, enable the following:
-        //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
-        // In Unix environment, you need to run the below command in the terminal to set the environment variable.
-        // export COREHOST_TRACE=1
+    //private void LoadHostfxrLibrary()
+    //{
+    //    // If having problems with the managed host, enable the following:
+    //    //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
+    //    // In Unix environment, you need to run the below command in the terminal to set the environment variable.
+    //    // export COREHOST_TRACE=1
 
-        var hostfxrFullPath = NetHost.GetHostFxrPath();
-        Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
+    //    //var hostfxrFullPath = NetHost.GetHostFxrPath();
+    //    //Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
 
-        _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
-        if (_hostfxrHandle == IntPtr.Zero)
-        {
-            Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
-            return;
-        }
-        Logger.LogInfo($"hostfxr loaded successfully");
-    }
+    //    //_hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
+    //    //if (_hostfxrHandle == IntPtr.Zero)
+    //    //{
+    //    //    Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
+    //    //    return;
+    //    //}
+    //    //Logger.LogInfo($"hostfxr loaded successfully");
+    //}
 
     public int RunApplication(string assemblyPath)
     {
@@ -39,7 +39,23 @@ internal sealed class AppLoader : IDisposable
 
         unsafe
         {
-            Logger.LogInfo($"About to call HostFxr.Initialize");
+            var parameters = new NetHost.get_hostfxr_parameters
+            {
+                size = sizeof(NetHost.get_hostfxr_parameters),
+                assembly_path = (char*)Marshal.StringToHGlobalAnsi(assemblyPath).ToPointer()
+            };
+
+            var hostfxrFullPath = NetHost.GetHostFxrPath(parameters);
+            Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
+
+            _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
+            if (_hostfxrHandle == IntPtr.Zero)
+            {
+                Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
+            }
+
+            Logger.LogInfo($"hostfxr loaded successfully1");
+            Logger.LogInfo($"About to call HostFxr.Initialize1");
 
             var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 
