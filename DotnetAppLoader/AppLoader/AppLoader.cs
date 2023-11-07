@@ -1,5 +1,6 @@
 ﻿using DotnetAppLoader;
 using FunctionsNetHost;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 internal sealed class AppLoader : IDisposable
@@ -42,20 +43,25 @@ internal sealed class AppLoader : IDisposable
             var parameters = new NetHost.get_hostfxr_parameters
             {
                 size = sizeof(NetHost.get_hostfxr_parameters),
-                assembly_path = (char*)Marshal.StringToHGlobalAnsi(assemblyPath).ToPointer()
+                assembly_path = (char*)Marshal.StringToHGlobalUni(assemblyPath).ToPointer()
             };
 
-            var hostfxrFullPath = NetHost.GetHostFxrPath(parameters);
-            Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
+            Stopwatch sw = Stopwatch.StartNew();
+            var hostfxrFullPath = NetHost.GetHostFxrPath(&parameters);
+            sw.Stop();
+            Logger.LogInfo($"get_hostfxr_path took {sw.ElapsedMilliseconds}ms");
+            Logger.LogInfo($"get_hostfxr_path: {hostfxrFullPath}");
 
+            sw.Restart();
             _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
             if (_hostfxrHandle == IntPtr.Zero)
             {
                 Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
             }
-
-            Logger.LogInfo($"hostfxr loaded successfully1");
-            Logger.LogInfo($"About to call HostFxr.Initialize1");
+            sw.Stop();
+            Logger.LogInfo($"NativeLibrary.Load took {sw.ElapsedMilliseconds}ms");
+            Logger.LogInfo($"hostfxr loaded successfully.");
+            Logger.LogInfo($"About to call HostFxr.Initialize.");
 
             var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 

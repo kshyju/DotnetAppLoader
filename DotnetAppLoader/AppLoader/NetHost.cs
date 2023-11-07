@@ -12,12 +12,12 @@ namespace DotnetAppLoader
         }
 
         [DllImport("nethost", CharSet = CharSet.Auto)]
-        private static extern int get_hostfxr_path(
+        private unsafe static extern int get_hostfxr_path(
         [Out] char[] buffer,
         [In] ref int buffer_size,
-        get_hostfxr_parameters parameters);
+        get_hostfxr_parameters* parameters);
 
-        internal static string GetHostFxrPath(get_hostfxr_parameters parameters)
+        internal unsafe static string GetHostFxrPath(get_hostfxr_parameters* parameters)
         {
             char[] buffer = new char[200];
             int buffer_size = buffer.Length;
