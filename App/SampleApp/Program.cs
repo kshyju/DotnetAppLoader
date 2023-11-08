@@ -11,7 +11,7 @@ namespace SampleApp
             var os = Environment.OSVersion;
             Logger.LogInfo($"OS: {os}");
 
-            Initializer.Init();
+            new NativeClient().Start();
         }
     }
 }
