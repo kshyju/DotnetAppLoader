@@ -14,17 +14,22 @@ namespace AppLibrary
     {
         static NativeMethods()
         {
-            NativeLibrary.SetDllImportResolver(typeof(Initializer).Assembly, ImportResolver);
+            NativeLibrary.SetDllImportResolver(typeof(NativeClient).Assembly, ImportResolver);
         }
 
         private const string NativeWorkerDll = "FunctionsNetHost";
 
-        public static NativeHost GetNativeHostData()
+        public static void RegisterCallbacks(
+                    delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
+                    IntPtr grpcHandler)
         {
-            _ = get_application_properties(out var hostData);
-
-            return hostData;
+            _ = register_callbacks(IntPtr.Zero, requestCallback, grpcHandler);
         }
+
+        [DllImport(NativeWorkerDll)]
+        private static extern unsafe int register_callbacks(IntPtr pInProcessApplication,
+            delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
+            IntPtr grpcHandler);
 
         [DllImport(NativeWorkerDll, CharSet = CharSet.Auto)]
         private static extern int get_application_properties(out NativeHost hostData);

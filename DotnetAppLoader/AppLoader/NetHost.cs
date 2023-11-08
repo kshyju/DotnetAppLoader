@@ -4,18 +4,25 @@ namespace DotnetAppLoader
 {
     internal class NetHost
     {
+        public unsafe struct get_hostfxr_parameters
+        {
+            public nint size;
+            public char* assembly_path;
+            public char* dotnet_root;
+        }
+
         [DllImport("nethost", CharSet = CharSet.Auto)]
-        private static extern int get_hostfxr_path(
+        private unsafe static extern int get_hostfxr_path(
         [Out] char[] buffer,
         [In] ref int buffer_size,
-        IntPtr reserved);
+        get_hostfxr_parameters* parameters);
 
-        internal static string GetHostFxrPath()
+        internal unsafe static string GetHostFxrPath(get_hostfxr_parameters* parameters)
         {
             char[] buffer = new char[200];
             int buffer_size = buffer.Length;
 
-            int rc = get_hostfxr_path(buffer, ref buffer_size, IntPtr.Zero);
+            int rc = get_hostfxr_path(buffer, ref buffer_size, parameters);
 
             if (rc != 0)
             {

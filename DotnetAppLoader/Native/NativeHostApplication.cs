@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using DotnetAppLoader;
+
 namespace FunctionsNetHost
 {
     public sealed class NativeHostApplication
@@ -18,8 +20,7 @@ namespace FunctionsNetHost
             _requestHandlerCallback = callback;
             _workerHandle = grpcHandle;
 
-            Console.WriteLine("SetCallbackHandles invoked");
-
+            Logger.LogInfo("SetCallbackHandles invoked");
         }
     }
 }
