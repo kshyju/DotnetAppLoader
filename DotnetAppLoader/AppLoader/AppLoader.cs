@@ -1,38 +1,14 @@
 ﻿using DotnetAppLoader;
+using DotnetAppLoader.Diagnostics;
 using FunctionsNetHost;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 internal sealed class AppLoader : IDisposable
 {
-    private static readonly AppLoader _instance = new();
     private IntPtr _hostfxrHandle = IntPtr.Zero;
     private IntPtr _hostContextHandle = IntPtr.Zero;
     private bool _disposed;
-
-    internal AppLoader()
-    {
-       // LoadHostfxrLibrary();
-    }
-
-    //private void LoadHostfxrLibrary()
-    //{
-    //    // If having problems with the managed host, enable the following:
-    //    //Environment.SetEnvironmentVariable("COREHOST_TRACE", "1");
-    //    // In Unix environment, you need to run the below command in the terminal to set the environment variable.
-    //    // export COREHOST_TRACE=1
-
-    //    //var hostfxrFullPath = NetHost.GetHostFxrPath();
-    //    //Logger.LogInfo($"hostfxrFullPath: {hostfxrFullPath}");
-
-    //    //_hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
-    //    //if (_hostfxrHandle == IntPtr.Zero)
-    //    //{
-    //    //    Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
-    //    //    return;
-    //    //}
-    //    //Logger.LogInfo($"hostfxr loaded successfully");
-    //}
 
     public int RunApplication(string assemblyPath)
     {
@@ -53,16 +29,21 @@ internal sealed class AppLoader : IDisposable
             Logger.LogInfo($"get_hostfxr_path: {hostfxrFullPath}");
 
             sw.Restart();
+
+            AppLoaderEventSource.Log.HostFxrLoadStart(hostfxrFullPath);
             _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
             if (_hostfxrHandle == IntPtr.Zero)
             {
                 Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
             }
+            AppLoaderEventSource.Log.HostFxrLoadStop();
+            
             sw.Stop();
             Logger.LogInfo($"NativeLibrary.Load took {sw.ElapsedMilliseconds}ms");
             Logger.LogInfo($"hostfxr loaded successfully.");
             Logger.LogInfo($"About to call HostFxr.Initialize.");
 
+            AppLoaderEventSource.Log.HostFxrInitializeForDotnetCommandLineStart(assemblyPath);
             var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 
             if (_hostContextHandle == IntPtr.Zero)
@@ -76,8 +57,10 @@ internal sealed class AppLoader : IDisposable
             {
                 return error;
             }
+            AppLoaderEventSource.Log.HostFxrInitializeForDotnetCommandLineStop();
 
             Logger.LogInfo($"About to call HostFxr.Run");
+            AppLoaderEventSource.Log.HostFxrRunAppStart();
             return HostFxr.Run(_hostContextHandle);
         }
     }

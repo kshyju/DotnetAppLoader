@@ -28,7 +28,7 @@ class Program
                 Console.WriteLine("Error calling RunApplication from Main.", ex);
             }
         }
-
+        Console.ReadKey();
         return 1;
     }
 }
