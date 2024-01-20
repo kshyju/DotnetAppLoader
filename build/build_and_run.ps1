@@ -1,12 +1,15 @@
 # Set the paths to your project directories
-$appLoaderProjectPath = "..\DotnetAppLoader"
-$customerAppProjectPath = "..\App\SampleApp"
+$hostWebAppProjectPath = ".\HostWebApp"
+$appLoaderProjectPath = ".\DotnetAppLoader"
+$customerAppProjectPath = ".\App\SampleApp"
 
 # Set the output directory
-$outputDirectory = "..\out"
+$outputDirectory = ".\out"
+
+dotnet publish $hostWebAppProjectPath -c Release -r win-x64 -o $outputDirectory\HostWebApp
 
 Write-Output "    Publishing DotnetAppLoader project..."
-dotnet publish $appLoaderProjectPath -c Release -r win-x64 -o $outputDirectory\DotnetAppLoader
+dotnet publish $appLoaderProjectPath -c Release -r win-x64 -o $outputDirectory\HostWebApp\DotnetAppLoader
 
 Write-Output "    Publishing SampleApp project..."
 dotnet publish $customerAppProjectPath -c Release -r win-x64 -o $outputDirectory\SampleApp
