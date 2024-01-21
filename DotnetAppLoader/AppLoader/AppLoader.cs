@@ -1,7 +1,5 @@
 ﻿using DotnetAppLoader;
 using DotnetAppLoader.Diagnostics;
-using FunctionsNetHost;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 internal sealed class AppLoader : IDisposable
@@ -12,7 +10,7 @@ internal sealed class AppLoader : IDisposable
 
     public int RunApplication(string assemblyPath)
     {
-        Logger.LogInfo($"{assemblyPath} file.Exists:{File.Exists(assemblyPath)}");
+        Logger.LogInfo($"File {assemblyPath} exists:{File.Exists(assemblyPath)}");
 
         unsafe
         {
@@ -22,34 +20,24 @@ internal sealed class AppLoader : IDisposable
                 assembly_path = (char*)Marshal.StringToHGlobalUni(assemblyPath).ToPointer()
             };
 
-            Stopwatch sw = Stopwatch.StartNew();
             var hostfxrFullPath = NetHost.GetHostFxrPath(&parameters);
-            sw.Stop();
-            Logger.LogInfo($"get_hostfxr_path took {sw.ElapsedMilliseconds}ms");
-            Logger.LogInfo($"get_hostfxr_path: {hostfxrFullPath}");
-
-            sw.Restart();
+            Logger.LogInfo($"HostFxr path: {hostfxrFullPath}");
 
             AppLoaderEventSource.Log.HostFxrLoadStart(hostfxrFullPath);
             _hostfxrHandle = NativeLibrary.Load(hostfxrFullPath);
             if (_hostfxrHandle == IntPtr.Zero)
             {
-                Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
+                Logger.LogInfo($"Failed to load HostFxr. HostFxr path:{hostfxrFullPath}");
             }
             AppLoaderEventSource.Log.HostFxrLoadStop();
-            
-            sw.Stop();
-            Logger.LogInfo($"NativeLibrary.Load took {sw.ElapsedMilliseconds}ms");
-            Logger.LogInfo($"hostfxr loaded successfully.");
-            Logger.LogInfo($"About to call HostFxr.Initialize.");
 
+            Logger.LogInfo($"HostFxr loaded successfully. About to call HostFxr.Initialize.");
             AppLoaderEventSource.Log.HostFxrInitializeForDotnetCommandLineStart(assemblyPath);
             var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 
             if (_hostContextHandle == IntPtr.Zero)
             {
-                Logger.LogInfo(
-                    $"Failed to initialize the .NET Core runtime. assemblyPath:{assemblyPath}");
+                Logger.LogInfo($"Failed to initialize the .NET Core runtime. assemblyPath:{assemblyPath}");
                 return -1;
             }
 

@@ -7,21 +7,19 @@ class Program
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
+            Console.WriteLine("Pass the .NET (customer )assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
             return 1;
         }
 
-        Logger.LogInfo($"Args: {string.Join(" ", args)}");
+        Logger.LogInfo($"Raw Command line args: {string.Join(" ", args)}");
 
-        var workerAssemblyPath = args[0];
-
-        Logger.LogInfo($"workerAssemblyPath: {workerAssemblyPath}");
+        var customerAssemblyPath = args[0];
 
         using (var appLoader = new AppLoader())
         {
             try
             {
-                appLoader.RunApplication(workerAssemblyPath);
+                appLoader.RunApplication(customerAssemblyPath);
             }
             catch (Exception ex)
             {

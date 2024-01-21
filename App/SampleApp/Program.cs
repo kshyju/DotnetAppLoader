@@ -1,5 +1,4 @@
 ﻿using AppLibrary;
-using System.Collections;
 
 namespace SampleApp
 {
@@ -7,10 +6,7 @@ namespace SampleApp
     {
         public static void Main(string[] args)
         {
-            Logger.LogInfo($"Inside SampleApp Main");
-            var os = Environment.OSVersion;
-            Logger.LogInfo($"OS: {os}");
-
+            Logger.LogInfo($"Inside Customer assembly SampleApp Main");
             new NativeClient().Start();
         }
     }
