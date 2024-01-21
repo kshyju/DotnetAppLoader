@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace HostWebApp
 {
@@ -10,9 +8,11 @@ namespace HostWebApp
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
-        public ProcessStarterHostedService(ILogger<ProcessStarterHostedService> logger,
+        public ProcessStarterHostedService(
+            ILogger<ProcessStarterHostedService> logger,
             IConfiguration configuration,
-            IWebHostEnvironment webHostEnvironment, IHostApplicationLifetime appLifetime)
+            IWebHostEnvironment webHostEnvironment, 
+            IHostApplicationLifetime appLifetime)
         {
             _logger = logger;
             _hostApplicationLifetime = appLifetime;

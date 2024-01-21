@@ -31,39 +31,37 @@ namespace FunctionsNetHost.Grpc
 
         internal async Task InitAsync()
         {
-            Logger.LogInfo($"Grpc service endpoint:{_grpcEndpoint}");
-
-            var functionRpcClient = CreateFunctionRpcClient(_grpcEndpoint);
-            var eventStream = functionRpcClient.EventStream();
-            if (eventStream is null)
+            if (string.IsNullOrEmpty(_grpcEndpoint))
             {
-                Logger.LogInfo($"eventStream is null");
+                Logger.LogInfo($"Grpc service endpoint:{_grpcEndpoint}");
+
+                var functionRpcClient = CreateFunctionRpcClient(_grpcEndpoint);
+                var eventStream = functionRpcClient.EventStream();
+
+                await SendStartStreamMessageAsync(eventStream.RequestStream);
+
+                var readerTask = StartReaderAsync(eventStream.ResponseStream);
+
+                await Task.WhenAll(readerTask);
             }
-            await SendStartStreamMessageAsync(eventStream.RequestStream);
-
-
-            //await Task.Delay(20000);
-
-            var readerTask = StartReaderAsync(eventStream.ResponseStream);
-            //var writerTask = StartWriterAsync(eventStream.RequestStream);
-
-            // 
-
-            await Task.WhenAll(readerTask);
+            else
+            {
+                // Don't start GRPC connection. Just load the assembly.
+                _appLoader.RunApplication(_customerAssemblyPath);
+                await Task.Delay(TimeSpan.FromSeconds(300));
+            }
         }
 
         private async Task StartReaderAsync(IAsyncStreamReader<StreamingMessage> responseStream)
         {
             while (await responseStream.MoveNext())
             {
-                var message = responseStream.Current;
-                await HandleIncomingMessage(message);
+                await HandleIncomingMessage((StreamingMessage?)responseStream.Current);
             }
         }
 
         private Task HandleIncomingMessage(StreamingMessage message)
         {
-            // Queue the work to another thread.
             Task.Run(() =>
            {
                Logger.LogInfo($"Received message from host.ContentCase:{message.ContentCase}");
@@ -75,13 +73,6 @@ namespace FunctionsNetHost.Grpc
 
            });
             return Task.CompletedTask;
-        }
-        private async Task StartWriterAsync(IClientStreamWriter<StreamingMessage> requestStream)
-        {
-            await foreach (var rpcWriteMsg in _outgoingMessageChannel.Reader.ReadAllAsync())
-            {
-                await requestStream.WriteAsync(rpcWriteMsg);
-            }
         }
 
         private async Task SendStartStreamMessageAsync(IClientStreamWriter<StreamingMessage> requestStream)
