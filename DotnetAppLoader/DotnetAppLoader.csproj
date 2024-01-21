@@ -35,5 +35,21 @@
     nethost.dll, comhost.dll,nethost.lib,libnethost But all we really needs is nethost.dkk-->
     <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
   </ItemGroup>
-  
+
+	<ItemGroup>
+		<PackageReference Include="Google.Protobuf" Version="3.23.2" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
+		<PackageReference Include="Grpc.Net.ClientFactory" Version="2.53.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.54.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Protobuf Include="..\Protos\**\*.proto" 
+				ProtoRoot="..\Protos"
+				GrpcServices="Client" Access="internal" />
+	</ItemGroup>
+	
 </Project>

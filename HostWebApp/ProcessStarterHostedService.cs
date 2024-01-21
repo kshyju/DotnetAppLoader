@@ -6,44 +6,63 @@ namespace HostWebApp
 {
     public sealed class ProcessStarterHostedService : BackgroundService
     {
-        private const string CustomerAppAssemblyPath = "./../SampleApp/SampleApp.dll";
         private readonly ILogger<ProcessStarterHostedService> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public ProcessStarterHostedService(ILogger<ProcessStarterHostedService> logger, IWebHostEnvironment webHostEnvironment, IHostApplicationLifetime appLifetime)
+        private readonly IConfiguration _configuration;
+        public ProcessStarterHostedService(ILogger<ProcessStarterHostedService> logger,
+            IConfiguration configuration,
+            IWebHostEnvironment webHostEnvironment, IHostApplicationLifetime appLifetime)
         {
             _logger = logger;
             _hostApplicationLifetime = appLifetime;
             _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var appLoaderExePath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "./DotnetAppLoader/FunctionsNetHost.exe"));
+            // Give the GRPC server time to startup
+            await Task.Delay(2000);
+
+            var appLoaderExePath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "../out/DotnetAppLoader/FunctionsNetHost.exe"));
+            if (!File.Exists(appLoaderExePath))
+            {
+                _logger.LogWarning("Run ./build/publish_aot.apploader.ps1 first");
+            }
 
             if (!File.Exists(appLoaderExePath))
             {
-                _logger.LogWarning(
-                    "1) Build the project using .\\build\\build_and_run.ps1 from repo root. " +
-                    "2) Execute dotnet dotnet HostWebApp.dll from output.");
+                _logger.LogError($"Could not find {appLoaderExePath}");
             }
 
-            await StartDotnetAppLoaderChildProcess(appLoaderExePath, stoppingToken);
+            var customerAssemblyPath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "./../out/SampleApp/SampleApp.dll"));
+            if (!File.Exists(customerAssemblyPath))
+            {
+                _logger.LogWarning("Missing customer assembly file. Run ./build/publish_aot.apploader.ps1 first");
+            }
+            if (!File.Exists(customerAssemblyPath))
+            {
+                _logger.LogError($"Could not find {customerAssemblyPath}");
+            }
+
+             await StartDotnetAppLoaderChildProcess(appLoaderExePath, customerAssemblyPath, stoppingToken);
         }
 
-        private async Task StartDotnetAppLoaderChildProcess(string executablePath, CancellationToken stoppingToken)
+        private async Task StartDotnetAppLoaderChildProcess(string executablePath, string customerAssemblyPath, CancellationToken stoppingToken)
         {
-            var customerAssemblyPath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, CustomerAppAssemblyPath));
             _logger.LogInformation($"Starting child process ({executablePath}) which will load .NET assembly ({customerAssemblyPath}");
             try
             {
+                var grpcEndpoint = _configuration["urls"].Split(";")[0];
+
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = executablePath,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
-                    Arguments = customerAssemblyPath
+                    Arguments = $"{customerAssemblyPath} {grpcEndpoint}"
                 };
 
                 using (var process = new Process())
@@ -70,12 +89,16 @@ namespace HostWebApp
                         }
                     };
 
-                    HostWebAppEventSource.Log.ChildProcessStart(executablePath);
+                    //HostWebAppEventSource.Log.ChildProcessStart(executablePath);
 
                     var started = process.Start();
                     if (!started)
                     {
                         _logger.LogError($"Failed to start {executablePath}");
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Started {executablePath}");
                     }
 
                     process.BeginOutputReadLine();

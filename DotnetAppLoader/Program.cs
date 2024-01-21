@@ -1,9 +1,10 @@
 ﻿using DotnetAppLoader;
+using FunctionsNetHost.Grpc;
 
 class Program
 {
 
-    static int Main(string[] args)
+    static async Task<int> Main(string[] args)
     {
         if (args.Length == 0)
         {
@@ -15,15 +16,24 @@ class Program
 
         var customerAssemblyPath = args[0];
 
+        var grpcEndpoint = "";
+        if (args.Length>1)
+        {
+            grpcEndpoint = args[1];
+        }
+
+        grpcEndpoint = "http://localhost:5138";
+
         using (var appLoader = new AppLoader())
         {
             try
             {
-                appLoader.RunApplication(customerAssemblyPath);
+                await new GrpcClient(appLoader, customerAssemblyPath, grpcEndpoint).InitAsync();
+                
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error calling RunApplication from Main.", ex);
+                Console.WriteLine("Error calling RunApplication from Main." + ex.ToString());
             }
         }
         Console.ReadKey();
