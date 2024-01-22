@@ -1,43 +1,57 @@
+## Case 1 - NO AOT Publish
 
 ### To run
 
-#### AOT Publish DotnetAppLoader
+#### 1. Publish DotnetAppLoader 
 Open a powershell terminal and run the below commands from the root of the repo.
 
 ```bash
 > .\build\publish_aot_apploader.ps1
 ```
 
-This will publish native executable and the sample .net app assembly to the `out` folder.
-#### Run the app
-
-##### Option 1 - Run the native executable using command line.
-
-```bash
-> out\DotnetAppLoader
-> .\FunctionsNetHost.exe ..\SampleApp\SampleApp.dll
-```
-
-
-##### Option 1 - Run as a child process launched from web app host.
+This will publish the DotnetAppLoader project to the `out\DotnetAppLoader` folder.
+#### 2. Run the host web app.
 
 ```bash
 > cd HostWebApp
 > dotnet run
 ```
 
-If everything works as expected we should be seeing the logs emitted from native host and the SampleApp. something like below
+This will start the "HostWebApp" which will start a GRPC server & also start a child process which will launch the published binary of "DotnetAppLoader". The DotnetAppLoader has GRPC client code which will establish a GRPC connection with the GRPC service on HostWebApp.
+
+If everything works as expected we should be seeing the logs emitted like below
 
 ```
-[DotnetAppLoader] Raw Command line args: ..\SampleApp\SampleApp.dll
-[DotnetAppLoader] file ..\SampleApp\SAmpleApp.dll exists:True
-[DotnetAppLoader] HostFxr path: C:\Program Files\dotnet\host\fxr\8.0.1\hostfxr.dll
+[DotnetAppLoader] Raw Command line args: http://localhost:5138
+[DotnetAppLoader] Grpc service endpoint:http://localhost:5138
+[DotnetAppLoader] Sent StartStream message to host.
 [DotnetAppLoader] HostFxr loaded successfully. About to call HostFxr.Initialize.
-[DotnetAppLoader] About to call HostFxr.Run
-  [CustomerApp]   Inside Customer assembly SampleApp Main
-  [CustomerApp]   Inside Customer Assembly AppLibrary.NativeClient.Start()
-  [CustomerApp]  NET7_0_OR_GREATER
-[DotnetAppLoader] NativeExports.RegisterCallbacks method invoked
+info: FunctionRpcGrpcService.MyMessagingService[0]
+      ---------------------<><><> New Message received from client.ContentCase:StartStream---1/21/2024 7:45:13 PM
+ [DotnetAppLoader] Received message from host.ContentCase:WorkerInitRequest
+info: FunctionRpcGrpcService.MyMessagingService[0]
+      ---------------------<><><> New Message received from client.ContentCase:RpcLog---1/21/2024 7:45:13 PM
+info: FunctionRpcGrpcService.MyMessagingService[0]
+       ~~~ RPC LOG: Hello 1 from AppLoader. ~~~
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5138
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: https://localhost:7138
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Dev\OSS\DotnetAppLoader\HostWebApp
+info: FunctionRpcGrpcService.MyMessagingService[0]
+      ---------------------<><><> New Message received from client.ContentCase:RpcLog---1/21/2024 7:45:15 PM
+info: FunctionRpcGrpcService.MyMessagingService[0]
+       ~~~ RPC LOG: Hello 2 from AppLoader. ~~~
+info: FunctionRpcGrpcService.MyMessagingService[0]
+      ---------------------<><><> New Message received from client.ContentCase:RpcLog---1/21/2024 7:45:17 PM
+info: FunctionRpcGrpcService.MyMessagingService[0]
+       ~~~ RPC LOG: Hello 3 from AppLoader. ~~~
+info: FunctionRpcGrpcService.MyMessagingService[0]
 ```
 
 ### To reproduce the issue
