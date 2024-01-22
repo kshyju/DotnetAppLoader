@@ -5,6 +5,8 @@ $customerAppProjectPath = ".\App\SampleApp"
 # Set the output directory
 $outputDirectory = ".\out"
 
+dotnet clean "DotnetAppLoader.sln"
+
 Write-Output "    Publishing DotnetAppLoader project..."
 dotnet publish $appLoaderProjectPath -c Release -r win-x64 -o $outputDirectory\DotnetAppLoader
 

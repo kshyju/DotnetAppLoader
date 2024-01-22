@@ -72,15 +72,19 @@ namespace MovieService.Services
             {
                 _logger.LogInformation($@" ~~~ RPC LOG: [{request.RpcLog.Level}] {request.RpcLog.Message} ~~~");
             }
+            else
+            {
+                _logger.LogInformation($"---------------------Some other msg---{request.ContentCase}");
+            }
 
         }
         private async Task SendMessages(IServerStreamWriter<StreamingMessage> responseStream)
         {
             await foreach (StreamingMessage message in _outgoingMessageChannel.Reader.ReadAllAsync())
             {
-                _logger.LogInformation($"Before sending {message.ContentCase.ToString()}");
+               // _logger.LogInformation($"Before sending {message.ContentCase.ToString()}");
                 await responseStream.WriteAsync(message);
-                _logger.LogInformation($"---------------------Sent{message.ContentCase.ToString()} Finished");
+               // _logger.LogInformation($"---------------------Sent{message.ContentCase.ToString()} Finished");
             }
         }
     }

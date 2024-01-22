@@ -17,25 +17,24 @@ class Program
         var customerAssemblyPath = args[0];
 
         var grpcEndpoint = "";
-        if (args.Length>1)
+        if (args.Length > 1)
         {
             grpcEndpoint = args[1];
         }
 
         grpcEndpoint = "http://localhost:5138";
 
-        using (var appLoader = new AppLoader())
+
+        try
         {
-            try
-            {
-                await new GrpcClient(appLoader, customerAssemblyPath, grpcEndpoint).InitAsync();
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error calling RunApplication from Main." + ex.ToString());
-            }
+            await new GrpcClient(grpcEndpoint).InitAsync();
+
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error calling RunApplication from Main." + ex.ToString());
+        }
+
         Console.ReadKey();
         return 1;
     }
