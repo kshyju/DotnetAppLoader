@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <PublishAot>true</PublishAot>
+    <!--<PublishAot>true</PublishAot>-->
   </PropertyGroup>
 
   <!--Below is needed to tell linker to include our exported functions in net7.0.-->
@@ -18,9 +18,9 @@
   </ItemGroup>
 
 	<!--! Need to enable event source support in net8.0 AOT-->
-	<PropertyGroup>
+	<!--<PropertyGroup>
 		<EventSourceSupport>true</EventSourceSupport>
-	</PropertyGroup>
+	</PropertyGroup>-->
 	
   <PropertyGroup>
     <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>
