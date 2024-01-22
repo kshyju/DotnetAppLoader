@@ -3,6 +3,7 @@
 
 using System.Threading.Channels;
 using DotnetAppLoader;
+using DotnetAppLoader.Diagnostics;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Azure.Functions.WorkerHarness.Grpc.Messages;
@@ -17,7 +18,7 @@ namespace FunctionsNetHost.Grpc
 
         internal GrpcClient(string endpoint)
         {
-            _grpcEndpoint = endpoint; 
+            _grpcEndpoint = endpoint;
             var channelOptions = new UnboundedChannelOptions
             {
                 SingleWriter = false,
@@ -41,7 +42,6 @@ namespace FunctionsNetHost.Grpc
             await SendStartStreamMessageAsync(eventStream.RequestStream);
 
             await Task.WhenAll(readerTask, writerTask);
-
         }
 
         private async Task StartReaderAsync(IAsyncStreamReader<StreamingMessage> responseStream)
@@ -67,7 +67,9 @@ namespace FunctionsNetHost.Grpc
 
             if (message.ContentCase == StreamingMessage.ContentOneofCase.WorkerInitRequest)
             {
-                // Queue a task whic keeps sending a message to host.
+                AppLoaderEventSource.Log.HostGrpcHandshakeStop();
+
+                // Send some Log messages back to host.
                 for (var i = 0; i < 10; i++)
                 {
                     var streamingMessage = new StreamingMessage()
@@ -78,28 +80,23 @@ namespace FunctionsNetHost.Grpc
                             Message = $"Hello {i} from AppLoader."
                         }
                     };
-                    Logger.LogInfo($"Sending message {i} to host.");
-                    //_outgoingMessageChannel.Writer.TryWrite(streamingMessage);
+
                     await _outgoingMessageChannel.Writer.WriteAsync(streamingMessage);
-                    await Task.Delay(500);
+                    await Task.Delay(1000);
                 }
-            }
-            else
-            {
-                Logger.LogInfo("Some other msg");
             }
         }
 
         private async Task SendStartStreamMessageAsync(IClientStreamWriter<StreamingMessage> requestStream)
         {
-            var startStreamMsg = new StartStream()
-            {
-                WorkerId = Guid.NewGuid().ToString()
-            };
+            AppLoaderEventSource.Log.HostGrpcHandshakeStart();
 
             var startStream = new StreamingMessage()
             {
-                StartStream = startStreamMsg
+                StartStream = new StartStream()
+                {
+                    WorkerId = Guid.NewGuid().ToString()
+                }
             };
 
             await _outgoingMessageChannel.Writer.WriteAsync(startStream);
@@ -122,6 +119,5 @@ namespace FunctionsNetHost.Grpc
 
             return new FunctionRpcClient(grpcChannel);
         }
-
     }
 }
