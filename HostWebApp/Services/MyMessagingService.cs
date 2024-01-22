@@ -59,7 +59,7 @@ namespace FunctionRpcGrpcService
             }
             else if (request.ContentCase == StreamingMessage.ContentOneofCase.RpcLog)
             {
-                _logger.LogInformation($@" ~~~ RPC LOG: [{request.RpcLog.Level}] {request.RpcLog.Message} ~~~");
+                _logger.LogInformation($@" ~~~ RPC LOG: {request.RpcLog.Message} ~~~");
             }
         }
         private async Task SendMessages(IServerStreamWriter<StreamingMessage> responseStream)

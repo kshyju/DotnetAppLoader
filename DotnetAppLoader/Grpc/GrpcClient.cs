@@ -70,7 +70,7 @@ namespace FunctionsNetHost.Grpc
                 AppLoaderEventSource.Log.HostGrpcHandshakeStop();
 
                 // Send some Log messages back to host.
-                for (var i = 0; i < 10; i++)
+                for (var i = 1; i <= 5; i++)
                 {
                     var streamingMessage = new StreamingMessage()
                     {
@@ -82,7 +82,7 @@ namespace FunctionsNetHost.Grpc
                     };
 
                     await _outgoingMessageChannel.Writer.WriteAsync(streamingMessage);
-                    await Task.Delay(1000);
+                    await Task.Delay(2000);
                 }
             }
         }

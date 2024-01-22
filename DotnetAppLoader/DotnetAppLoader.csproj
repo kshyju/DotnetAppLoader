@@ -30,12 +30,6 @@
     <ExportsFile>$(MSBuildThisFileDirectory)exports.def</ExportsFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- This pulls in a couple of dlls/libs such as 
-    nethost.dll, comhost.dll,nethost.lib,libnethost But all we really needs is nethost.dkk-->
-    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Google.Protobuf" Version="3.23.2" />
 		<PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
