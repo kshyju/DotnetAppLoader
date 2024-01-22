@@ -1,4 +1,4 @@
-## Case 1 - NO AOT Publish
+## Case 1 - AOT Publish
 
 ### To run
 
