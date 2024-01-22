@@ -18,9 +18,9 @@
   </ItemGroup>
 
 	<!--! Need to enable event source support in net8.0 AOT-->
-	<PropertyGroup>
+	<!--<PropertyGroup>
 		<EventSourceSupport>true</EventSourceSupport>
-	</PropertyGroup>
+	</PropertyGroup>-->
 	
   <PropertyGroup>
     <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>
