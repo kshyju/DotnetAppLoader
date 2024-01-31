@@ -23,6 +23,15 @@ namespace DotnetAppLoader.Diagnostics
             }
         }
 
+        [Event(3)]
+        public void HostGrpcWritingLog(string message)
+        {
+            if (IsEnabled())
+            {
+                WriteEvent(3, message);
+            }
+        }
+
         public static readonly AppLoaderEventSource Log = new();
     }
 }

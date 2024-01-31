@@ -22,7 +22,7 @@ class Program
             grpcEndpoint = args[1];
         }
 
-        grpcEndpoint = "http://localhost:5138";
+        //grpcEndpoint = "http://localhost:5138";
 
 
         try

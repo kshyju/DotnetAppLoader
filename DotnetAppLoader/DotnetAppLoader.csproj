@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>FunctionsNetHost</AssemblyName>
+    <AssemblyName>DotnetAppLoader</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
@@ -18,10 +18,13 @@
   </ItemGroup>
 
 	<!--! Need to enable event source support in net8.0 AOT-->
-	<!--<PropertyGroup>
+	<PropertyGroup>
 		<EventSourceSupport>true</EventSourceSupport>
-	</PropertyGroup>-->
-	
+	</PropertyGroup>
+	<!--! Temp to capture events-->
+	<PropertyGroup>
+		<UseWindowsThreadPool>false</UseWindowsThreadPool>
+	</PropertyGroup>
   <PropertyGroup>
     <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>
   </PropertyGroup>

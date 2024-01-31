@@ -22,7 +22,7 @@ namespace HostWebApp
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var appLoaderExePath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "../out/DotnetAppLoader/FunctionsNetHost.exe"));
+            var appLoaderExePath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "DotnetAppLoader.exe"));
             if (!File.Exists(appLoaderExePath))
             {
                 _logger.LogWarning("Run ./build/publish_aot.apploader.ps1 first");
@@ -36,7 +36,8 @@ namespace HostWebApp
             _logger.LogInformation($"Starting child process ({executablePath})");
             try
             {
-                var grpcEndpoint = _configuration["urls"]?.Split(";")[0];
+                var grpcEndpoint = _configuration["urls"]?.Split(";")[0] ?? "http://localhost:5000";
+                _logger.LogInformation($"grpcEndpoint {grpcEndpoint}");
 
                 var startInfo = new ProcessStartInfo
                 {
@@ -44,7 +45,7 @@ namespace HostWebApp
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
-                    Arguments = $"{grpcEndpoint}"
+                    Arguments = $"foo {grpcEndpoint}"
                 };
 
                 using (var process = new Process())
