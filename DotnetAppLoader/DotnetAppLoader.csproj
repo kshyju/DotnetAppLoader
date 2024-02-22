@@ -9,13 +9,8 @@
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
+	<IlcExportUnmanagedEntrypoints>true</IlcExportUnmanagedEntrypoints>
   </PropertyGroup>
-
-  <!--Below is needed to tell linker to include our exported functions in net7.0.-->
-  <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
-  <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' "/>
-  </ItemGroup>
   
   <PropertyGroup>
     <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>

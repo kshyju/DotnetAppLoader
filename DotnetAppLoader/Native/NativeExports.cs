@@ -8,20 +8,22 @@ namespace FunctionsNetHost
 {
     public static class NativeExports
     {
+
         [UnmanagedCallersOnly(EntryPoint = "get_application_properties")]
         public static unsafe int GetApplicationProperties(NativeHostData* nativeHostData)
         {
-            Logger.LogDebug("NativeExports.GetApplicationProperties method invoked.");
+            Logger.LogInfo("NativeExports.GetApplicationProperties method invoked.");
             return 1;
         }
+
 
         [UnmanagedCallersOnly(EntryPoint = "register_callbacks")]
         public static unsafe int RegisterCallbacks(IntPtr pInProcessApplication,
                                                 delegate* unmanaged<byte**, int, IntPtr, IntPtr> requestCallback,
             IntPtr grpcHandler)
         {
-            Logger.LogDebug("NativeExports.RegisterCallbacks method invoked.");
-            
+            Logger.LogInfo("NativeExports.RegisterCallbacks method invoked.");
+
             try
             {
                 NativeHostApplication.Instance.SetCallbackHandles(requestCallback, grpcHandler);
