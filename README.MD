@@ -1,34 +1,36 @@
-### To run
+Repro app shows 
 
-#### Build DotnetAppLoader
-```bash
-> cd DotnetAppLoader\DotnetAppLoader
-> dotnet publish -c debug -r win-x64 -o ..\out\loader\
-```
-#### Build sample app
+>On Unix-like systems, in-process environment modifications made by native libraries aren't seen by managed callers.
 
-```bash
-> cd DotnetAppLoader\App\SampleApp
-> dotnet publish -c release -r win-x64 -o ..\..\out\app\ --self-contained
-```
+source: https://learn.microsoft.com/en-us/dotnet/api/system.environment.getenvironmentvariables?view=net-8.0
 
 
-#### Run the generated native executable.
-```bash
-> cd DotnetAppLoader\out\loader
-> DotnetAppLoader.exe ..\app\SampleApp.dll
-```
+## Steps to reproduce
 
-If everything works as expected we should be seeing the logs emitted from native host and the SampleApp. something like below
+### Windows 
 
-```
-[DotnetAppLoader] Args: ..\app\SampleApp.dll
-[DotnetAppLoader] workerAssemblyPath: ..\app\SampleApp.dll
-[DotnetAppLoader] hostfxrFullPath: C:\Program Files\dotnet\host\fxr\8.0.0-rc.2.23479.6\hostfxr.dll
-[DotnetAppLoader] hostfxr loaded successfully
-[DotnetAppLoader] ..\app\SampleApp.dll file.Exists:True
-  [App]  Inside SampleApp Main
-  [App]  NET7_0_OR_GREATER
-[DotnetAppLoader] NativeExports.GetApplicationProperties method invoked.
-  [App]  Printing all EnvironmentVariables starts with FUNCTIONS_
-```
+in-process environment modifications made by native libraries are seen by managed callers.
+
+Build SampleApp
+
+
+Publish DotnetAppLoader project
+>dotnet publish -c Release -r win-x64 -o out
+
+Run DotnetAppLoader native executable and pass the path to the SampleApp.dll
+>out\FunctionsNetHost.exe "D:\src\DotnetAppLoader\App\SampleApp\bin\Debug\net9.0\SampleApp.dll"
+
+
+### Linux
+
+in-process environment modifications made by native libraries are NOT seen by managed callers.
+
+
+Open a terminal at the directory whrere the docker file is located. Build the docker image.
+
+>docker build -t dotnetapploader:1 -f .\Dockerfile .
+
+Run the container using this docker image.
+
+>docker run dotnetapploader:1
+
