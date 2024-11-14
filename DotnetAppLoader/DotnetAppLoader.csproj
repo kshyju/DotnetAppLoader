@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>FunctionsNetHost</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -23,7 +23,7 @@
   <ItemGroup>
     <!-- This pulls in a couple of dlls/libs such as 
     nethost.dll, comhost.dll,nethost.lib,libnethost But all we really needs is nethost.dkk-->
-    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="7.0.5" />
+    <PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="9.0.0" />
   </ItemGroup>
   
 </Project>

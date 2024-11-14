@@ -3,7 +3,7 @@
 class Program
 {
 
-    static int Main(string[] args)
+    static async Task<int> Main(string[] args)
     {
         if (args.Length == 0)
         {
@@ -16,11 +16,13 @@ class Program
         var workerAssemblyPath = args[0];
 
         Logger.LogInfo($"workerAssemblyPath: {workerAssemblyPath}");
+        await Task.Delay(10);
 
         using (var appLoader = new AppLoader())
         {
             try
             {
+                SetEnvironmentVariableLater();
                 appLoader.RunApplication(workerAssemblyPath);
             }
             catch (Exception ex)
@@ -30,5 +32,15 @@ class Program
         }
 
         return 1;
+    }
+
+    static async Task SetEnvironmentVariableLater()
+    {
+        Logger.LogInfo("Waiting 5 seconds before setting environment variable");
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        var envVarName = "AOTFoo";
+        var envVarValue = "Hello world 1";
+        EnvironmentUtils.SetValue(envVarName, envVarValue);
+        Logger.LogInfo($"Set environment variable {envVarName} to {envVarValue}");
     }
 }

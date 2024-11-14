@@ -8,7 +8,7 @@ namespace DotnetAppLoader
 
         static Logger()
         {
-            CreateLogFile();
+            //CreateLogFile();
         }
 
         private static void CreateLogFile()
@@ -41,7 +41,7 @@ namespace DotnetAppLoader
         internal static void LogInfo(string message)
         {
             var ts = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-            var logMessage = $"[DotnetAppLoader][{ts}] [FunctionsNetHost] {message}";
+            var logMessage = $"[DotnetAppLoaderNativeCode][{ts}] {message}";
 
             if (!string.IsNullOrEmpty(_logFilePath))
             {
