@@ -14,7 +14,7 @@ namespace SampleApp
                     .ConfigureFunctionsWorkerDefaults()
                     .Build();
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 5; i++)
             {
                 await Task.Delay(1000);
                 Console.WriteLine($"[CustomerApp] Hello {i}");
