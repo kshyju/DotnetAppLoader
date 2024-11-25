@@ -5,25 +5,20 @@ class Program
 
     static async Task<int> Main(string[] args)
     {
-        if (args.Length == 0)
+        var placeHolderAssemblyPath = Path.Combine("..", "..", "App", "PlaceholderApp", "bin", "debug", "net9.0", "PlaceholderApp.dll");
+        if (!File.Exists(placeHolderAssemblyPath))
         {
-            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
-            return 1;
+            Logger.LogInfo($"Placeholder app assembly to load not found at {placeHolderAssemblyPath}");
         }
 
-        Logger.LogInfo($"Args: {string.Join(" ", args)}");
-
-        var workerAssemblyPath = args[0];
-
-        Logger.LogInfo($"workerAssemblyPath: {workerAssemblyPath}");
+        Logger.LogInfo($"placeholder app assembly path: {placeHolderAssemblyPath}");
         await Task.Delay(10);
 
         using (var appLoader = new AppLoader())
         {
             try
             {
-                SetEnvironmentVariableLater();
-                appLoader.RunApplication(workerAssemblyPath);
+                appLoader.RunApplication(placeHolderAssemblyPath);
             }
             catch (Exception ex)
             {
@@ -32,15 +27,5 @@ class Program
         }
 
         return 1;
-    }
-
-    static async Task SetEnvironmentVariableLater()
-    {
-        Logger.LogInfo("Waiting 5 seconds before setting environment variable");
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        var envVarName = "AOTFoo";
-        var envVarValue = "Hello world 1";
-        EnvironmentUtils.SetValue(envVarName, envVarValue);
-        Logger.LogInfo($"Set environment variable {envVarName} to {envVarValue}");
     }
 }

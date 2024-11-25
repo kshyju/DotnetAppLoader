@@ -1,36 +1,18 @@
-Repro app shows 
-
->On Unix-like systems, in-process environment modifications made by native libraries aren't seen by managed callers.
-
-source: https://learn.microsoft.com/en-us/dotnet/api/system.environment.getenvironmentvariables?view=net-8.0
-
-
-## Steps to reproduce
+### Framework Reference dependency loading minimal repro.
 
 ### Windows 
 
-in-process environment modifications made by native libraries are seen by managed callers.
-
-Build SampleApp
-
-
-Publish DotnetAppLoader project
+1. Publish DotnetAppLoader project
 >dotnet publish -c Release -r win-x64 -o out
 
-Run DotnetAppLoader native executable and pass the path to the SampleApp.dll
->out\FunctionsNetHost.exe "D:\src\DotnetAppLoader\App\SampleApp\bin\Debug\net9.0\SampleApp.dll"
+2. Open solution file and Build the solution. This will build the placeholder app and customer app.
 
+3. Open a new command prompt in the repo root (where the README is present) and run the following command to load the SampleApp.dll using DotnetAppLoader)
 
-### Linux
+> start-dotnetapploader.bat
 
-in-process environment modifications made by native libraries are NOT seen by managed callers.
+##### To see the failure.
 
+To repro, comment out `<FrameworkReference Include="Microsoft.AspNetCore.App" />` in `App\CustomerApp\App.csproj` and run again using above steps.
 
-Open a terminal at the directory whrere the docker file is located. Build the docker image.
-
->docker build -t dotnetapploader:1 -f .\Dockerfile .
-
-Run the container using this docker image.
-
->docker run dotnetapploader:1
 

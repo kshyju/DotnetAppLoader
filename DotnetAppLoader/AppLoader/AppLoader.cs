@@ -29,7 +29,6 @@ internal sealed class AppLoader : IDisposable
                 Logger.LogInfo($"Failed to load hostfxr. hostfxrFullPath:{hostfxrFullPath}");
             }
             Logger.LogInfo($"hostfxr loaded successfully.");
-            Logger.LogInfo($"About to call HostFxr.Initialize.");
 
             var error = HostFxr.Initialize(1, new[] { assemblyPath }, IntPtr.Zero, out _hostContextHandle);
 

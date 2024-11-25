@@ -1,4 +1,2 @@
 EXPORTS
    DotNetRuntimeDebugHeader DATA
-   get_application_properties
-   register_callbacks
