@@ -10,7 +10,6 @@
 ``` 
 2. Open solution file in Visual Studio and Build the solution. This will build the placeholder app and customer app.
 3. Open a new command prompt in the repo root and run the following commands. Make sure you update the path to the PlaceholderApp.dll in the below command to reflect your local location.
- ```bash
 
 ```bash
 >cd DotnetAppLoader\out
