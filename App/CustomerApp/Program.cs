@@ -8,7 +8,7 @@ namespace SampleApp
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("[CustomerApp] Hello from main method.");
+            Console.WriteLine("[CustomerApp] Hello from App.main method.");
 
             var host = new HostBuilder()
                     .ConfigureFunctionsWorkerDefaults()

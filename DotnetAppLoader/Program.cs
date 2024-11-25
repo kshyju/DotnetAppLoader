@@ -5,20 +5,22 @@ class Program
 
     static async Task<int> Main(string[] args)
     {
-        var placeHolderAssemblyPath = Path.Combine("..", "..", "App", "PlaceholderApp", "bin", "debug", "net9.0", "PlaceholderApp.dll");
-        if (!File.Exists(placeHolderAssemblyPath))
+        //var assemblyPath = Path.Combine("..", "..", "App", "PlaceholderApp", "bin", "debug", "net9.0", "PlaceholderApp.dll");
+        // Run the customer app assembly directly (Without using Assembly.SetEntryAssembly in startuphook)
+        var assemblyPath = Path.Combine("..", "..", "App", "CustomerApp", "bin", "debug", "net9.0", "App.dll");
+        if (!File.Exists(assemblyPath))
         {
-            Logger.LogInfo($"Placeholder app assembly to load not found at {placeHolderAssemblyPath}");
+            Logger.LogInfo($"Assembly to load not found at {assemblyPath}");
         }
 
-        Logger.LogInfo($"placeholder app assembly path: {placeHolderAssemblyPath}");
+        Logger.LogInfo($"Assembly path: {assemblyPath}");
         await Task.Delay(10);
 
         using (var appLoader = new AppLoader())
         {
             try
             {
-                appLoader.RunApplication(placeHolderAssemblyPath);
+                appLoader.RunApplication(assemblyPath);
             }
             catch (Exception ex)
             {
