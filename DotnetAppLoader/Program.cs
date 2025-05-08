@@ -2,12 +2,11 @@
 
 class Program
 {
-
     static async Task<int> Main(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Pass the worker assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
+            Console.WriteLine(@"Pass the worker assembly path as argument. Ex: ./FunctionsNetHost D:\src\DotnetAppLoader\App\SampleApp\bin\Debug\net9.0\SampleApp.dll");
             return 1;
         }
 
@@ -22,7 +21,7 @@ class Program
         {
             try
             {
-                SetEnvironmentVariableLater();
+                EnvironmentUtils.SetValue("AOT_FOO", "Bar");
                 appLoader.RunApplication(workerAssemblyPath);
             }
             catch (Exception ex)
@@ -32,15 +31,5 @@ class Program
         }
 
         return 1;
-    }
-
-    static async Task SetEnvironmentVariableLater()
-    {
-        Logger.LogInfo("Waiting 5 seconds before setting environment variable");
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        var envVarName = "AOTFoo";
-        var envVarValue = "Hello world 1";
-        EnvironmentUtils.SetValue(envVarName, envVarValue);
-        Logger.LogInfo($"Set environment variable {envVarName} to {envVarValue}");
     }
 }

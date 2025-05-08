@@ -1,27 +1,42 @@
 ﻿
+using System.Collections;
+
 namespace SampleApp
 {
     public class Program
     {
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello from SampleApp main method");
-            PrintEnvVariables();
+            Log("Hello from SampleApp main method");
 
-            for (int i = 0; i < 10; i++)
+            var aotFoo = Environment.GetEnvironmentVariable("AOT_FOO");
+            Log($"AOT_FOO: {aotFoo}");
+            for (int i = 10; i > 0; i--)
             {
-                await Task.Delay(1000);
-                PrintEnvVariables();
+                await Task.Delay(2000);
+                PrintAllEnvironmentVariablesWithPrefix(i, "DOTNET_");
             }
 
-            Console.WriteLine("Exiting SampleApp main method");
+            Log("Exiting SampleApp main method");
         }
 
-        private static void PrintEnvVariables()
+        private static void PrintAllEnvironmentVariablesWithPrefix(int counter, string prefix)
         {
-            var currentEnvironemntVariableCount = Environment.GetEnvironmentVariables().Count;
-            var aotFooValue = Environment.GetEnvironmentVariable("AOTFoo");
-            Console.WriteLine($" [SampleAppManagedCode][{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] Total env variable count:{currentEnvironemntVariableCount}. AOTFoo env variable value: {aotFooValue}");
+            Log($"{counter} Printing all environment variables with prefix: {prefix}");
+
+            var envVariables = Environment.GetEnvironmentVariables();
+            foreach (DictionaryEntry entry in envVariables)
+            {
+                var key = entry.Key?.ToString();
+                var value = entry.Value?.ToString();
+
+                if (key != null && key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    Log($"  Key: {key}, Value: {value}");
+                }
+            }
         }
+
+        private static void Log(string message) => Console.WriteLine($"[SampleAppManagedCode][{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] {message}");
     }
 }
