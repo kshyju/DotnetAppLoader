@@ -14,6 +14,8 @@ class Program
 
         var workerAssemblyPath = args[0];
 
+        var diagnosticPort = args.Length > 1 ? args[1] : string.Empty;
+
         Logger.LogInfo($"workerAssemblyPath: {workerAssemblyPath}");
         await Task.Delay(10);
 
@@ -22,6 +24,13 @@ class Program
             try
             {
                 EnvironmentUtils.SetValue("AOT_FOO", "Bar");
+
+                if (!string.IsNullOrEmpty(diagnosticPort))
+                {
+                    Environment.SetEnvironmentVariable("DOTNET_DiagnosticPorts", diagnosticPort);
+                    Logger.LogInfo($"Diagnostic port env variable set to: {diagnosticPort}");
+                }
+
                 appLoader.RunApplication(workerAssemblyPath);
             }
             catch (Exception ex)
