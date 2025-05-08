@@ -1,41 +1,36 @@
 ﻿using DotnetAppLoader;
-using FunctionsNetHost.Grpc;
+using DotnetAppLoader.Grpc;
 
-class Program
+
+if (args.Length == 0)
 {
+    throw new ArgumentException("No command line arguments provided. Please provide the gRPC endpoint.");
+}
 
-    static async Task<int> Main(string[] args)
+Logger.LogInfo($"Raw Command line args: {string.Join(" ", args)}");
+
+
+var grpcEndpoint = "";
+if (args.Length > 0)
+{
+    grpcEndpoint = args[0];
+}
+
+try
+{
+    using (var appLoader = new AppLoader())
     {
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Pass the .NET (customer )assembly path as argument. Ex: ./FunctionsNetHost C:/Temp/SampleApp.dll");
-            return 1;
-        }
-
-        Logger.LogInfo($"Raw Command line args: {string.Join(" ", args)}");
-
-        var customerAssemblyPath = args[0];
-
-        var grpcEndpoint = "";
-        if (args.Length > 1)
-        {
-            grpcEndpoint = args[1];
-        }
-
-        //grpcEndpoint = "http://localhost:5138";
-
-
-        try
-        {
-            await new GrpcClient(grpcEndpoint).InitAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error calling RunApplication from Main." + ex.ToString());
-        }
-
-        Console.ReadKey();
-        return 1;
+        await new GrpcClient(grpcEndpoint, appLoader).InitAsync();
     }
 }
+catch (Exception ex)
+{
+    Console.WriteLine("Error calling RunApplication from Main." + ex.ToString());
+}
+finally
+{
+    Console.WriteLine("Exiting Main");
+}
+
+Console.ReadKey();
+return 1;

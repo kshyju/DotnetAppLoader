@@ -9,15 +9,17 @@ using Grpc.Net.Client;
 using Microsoft.Azure.Functions.WorkerHarness.Grpc.Messages;
 using static Microsoft.Azure.Functions.WorkerHarness.Grpc.Messages.FunctionRpc;
 
-namespace FunctionsNetHost.Grpc
+namespace DotnetAppLoader.Grpc
 {
     internal sealed class GrpcClient
     {
         private readonly Channel<StreamingMessage> _outgoingMessageChannel;
         private readonly string _grpcEndpoint;
+        private AppLoader _appLoader;
 
-        internal GrpcClient(string endpoint)
+        internal GrpcClient(string endpoint, AppLoader appLoader)
         {
+            _appLoader = appLoader;
             _grpcEndpoint = endpoint;
             var channelOptions = new UnboundedChannelOptions
             {
@@ -69,7 +71,6 @@ namespace FunctionsNetHost.Grpc
             {
                 AppLoaderEventSource.Log.HostGrpcHandshakeStop();
 
-                // Send some Log messages back to host.
                 for (var i = 1; i <= 10; i++)
                 {
                     var streamingMessage = new StreamingMessage()
@@ -87,6 +88,25 @@ namespace FunctionsNetHost.Grpc
 
                     await Task.Delay(1000);
                 }
+            }
+            else if (message.ContentCase == StreamingMessage.ContentOneofCase.FunctionEnvironmentReloadRequest)
+            {
+                var envReloadRequest = message.FunctionEnvironmentReloadRequest;
+                var applicationExePath = envReloadRequest.FunctionAppDirectory;
+                Logger.LogInfo($"Received FunctionEnvironmentReloadRequest. FunctionAppPath: {applicationExePath}");
+                foreach (var kv in envReloadRequest.EnvironmentVariables)
+                {
+                    Logger.LogInfo($"Setting environment variable: {kv.Key}={kv.Value}");
+                    EnvironmentUtil.SetEnvVar(kv.Key, kv.Value);
+                }
+
+#pragma warning disable CS4014
+                Task.Run(() =>
+#pragma warning restore CS4014
+                {
+                    Logger.LogInfo($"Starting application: {applicationExePath}");
+                    _ = _appLoader.RunApplication(applicationExePath);
+                });
             }
         }
 

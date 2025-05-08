@@ -2,29 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>DotnetAppLoader</AssemblyName>
+    <TargetFramework>net9.0</TargetFramework>
+    <!--<AssemblyName>FunctionsNetHost</AssemblyName>-->
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
+	<IlcExportUnmanagedEntrypoints>true</IlcExportUnmanagedEntrypoints>
   </PropertyGroup>
-
-  <!--Below is needed to tell linker to include our exported functions in net7.0.-->
-  <!--Use IlcExportUnmanagedEntrypoints when adopting .net8.0-->
-  <ItemGroup>
-    <CustomLinkerArg Include="-Wl,--export-dynamic" Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' " />
-  </ItemGroup>
-
-	<!--! Need to enable event source support in net8.0 AOT-->
-	<PropertyGroup>
-		<EventSourceSupport>true</EventSourceSupport>
-	</PropertyGroup>
-	<!--! Temp to capture events-->
-	<PropertyGroup>
-		<UseWindowsThreadPool>false</UseWindowsThreadPool>
-	</PropertyGroup>
+  
   <PropertyGroup>
     <DefineConstants Condition=" '$([MSBuild]::IsOSPlatform(`Linux`))' == 'true' ">OS_LINUX</DefineConstants>
   </PropertyGroup>
@@ -34,6 +21,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
+	<PackageReference Include="Microsoft.NETCore.DotNetAppHost" Version="9.0.0" />
 		<PackageReference Include="Google.Protobuf" Version="3.23.2" />
 		<PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
 		<PackageReference Include="Grpc.Net.ClientFactory" Version="2.53.0" />
@@ -44,9 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Protobuf Include="..\Protos\**\*.proto" 
-				ProtoRoot="..\Protos"
-				GrpcServices="Client" Access="internal" />
+	  <Protobuf Include="..\Protos\**\*.proto" ProtoRoot="..\Protos" GrpcServices="Client" Access="internal" />
 	</ItemGroup>
 	
 </Project>

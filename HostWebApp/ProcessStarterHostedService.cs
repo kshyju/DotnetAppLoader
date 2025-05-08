@@ -1,43 +1,34 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace HostWebApp
 {
-    public sealed class ProcessStarterHostedService : BackgroundService
+    public sealed class ProcessStarterHostedService(ILogger<ProcessStarterHostedService> logger, IHostApplicationLifetime appLifetime)
+        : BackgroundService
     {
-        private readonly ILogger<ProcessStarterHostedService> _logger;
-        private readonly IHostApplicationLifetime _hostApplicationLifetime;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IConfiguration _configuration;
-        public ProcessStarterHostedService(
-            ILogger<ProcessStarterHostedService> logger,
-            IConfiguration configuration,
-            IWebHostEnvironment webHostEnvironment,
-            IHostApplicationLifetime appLifetime)
-        {
-            _logger = logger;
-            _hostApplicationLifetime = appLifetime;
-            _webHostEnvironment = webHostEnvironment;
-            _configuration = configuration;
-        }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var appLoaderExePath = Path.GetFullPath(Path.Combine(_webHostEnvironment.ContentRootPath, "DotnetAppLoader.exe"));
-            if (!File.Exists(appLoaderExePath))
+            string exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+            string dotnetAppLoaderPath = Path.GetFullPath(Path.Combine(
+                exeDir, "..", "..", "DotnetAppLoader", "release_win-x64", "DotnetAppLoader.exe"));
+
+            if (!File.Exists(dotnetAppLoaderPath))
             {
-                _logger.LogWarning("Run ./build/publish_aot.apploader.ps1 first");
+                throw new FileNotFoundException(
+                    $"Expected binary not found at '{dotnetAppLoaderPath}'. Run 'publish_and_run.ps1' to generate the binaries and run the app.");
             }
 
-            await StartDotnetAppLoaderChildProcess(appLoaderExePath, stoppingToken);
+
+            await StartDotnetAppLoaderChildProcess(dotnetAppLoaderPath, stoppingToken);
         }
 
         private async Task StartDotnetAppLoaderChildProcess(string executablePath, CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"Starting child process ({executablePath})");
+            logger.LogInformation($"Starting child process ({executablePath})");
             try
             {
-                var grpcEndpoint = _configuration["urls"]?.Split(";")[0] ?? "http://localhost:5000";
-                _logger.LogInformation($"grpcEndpoint {grpcEndpoint}");
+                var grpcEndpoint = "http://localhost:6000";
+                logger.LogInformation($"grpcEndpoint {grpcEndpoint}");
 
                 var startInfo = new ProcessStartInfo
                 {
@@ -45,50 +36,48 @@ namespace HostWebApp
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
-                    Arguments = $"foo {grpcEndpoint}"
+                    Arguments = $"{grpcEndpoint}"
                 };
 
-                using (var process = new Process())
+                using var process = new Process();
+                process.StartInfo = startInfo;
+                appLifetime.ApplicationStopping.Register(() =>
                 {
-                    process.StartInfo = startInfo;
-                    _hostApplicationLifetime.ApplicationStopping.Register(() =>
-                    {
-                        _logger.LogInformation("IHostApplicationLifetime.ApplicationStopping fired. Will kill child process");
-                        process.Kill();
-                    });
+                    logger.LogInformation("IHostApplicationLifetime.ApplicationStopping fired. Will kill child process");
+                    process.Kill();
+                });
 
-                    process.OutputDataReceived += (sender, e) =>
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
                     {
-                        if (e.Data != null)
-                        {
-                            Console.WriteLine(" " + e.Data);
-                        }
-                    };
-                    process.ErrorDataReceived += (sender, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            _logger.LogError($"[Error from child process] {e.Data}");
-                        }
-                    };
-
-                    var started = process.Start();
-                    if (!started)
-                    {
-                        _logger.LogError($"Failed to start {executablePath}");
+                        Console.WriteLine(" " + e.Data);
                     }
-                    else
+                };
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
                     {
-                        _logger.LogInformation($"Started {executablePath}");
+                        logger.LogError($"[Error from child process] {e.Data}");
                     }
+                };
 
-                    process.BeginOutputReadLine();
-                    await process.WaitForExitAsync(stoppingToken);
+                var started = process.Start();
+                if (!started)
+                {
+                    logger.LogError($"Failed to start {executablePath}");
                 }
+                else
+                {
+                    logger.LogInformation($"Started {executablePath}");
+                }
+
+                process.BeginOutputReadLine();
+                await process.WaitForExitAsync(stoppingToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error: {ex}");
+                logger.LogError($"Error: {ex}");
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿
 using Grpc.Core;
 using Microsoft.Azure.Functions.WorkerHarness.Grpc.Messages;
+using System.Reflection;
 using System.Threading.Channels;
 
 namespace FunctionRpcGrpcService
@@ -60,6 +61,23 @@ namespace FunctionRpcGrpcService
             else if (request.ContentCase == StreamingMessage.ContentOneofCase.RpcLog)
             {
                 _logger.LogInformation($@" ~~~ RPC LOG: {request.RpcLog.Message} ~~~");
+                if (request.RpcLog.Message.Contains("Hello 10"))
+                {
+
+                    string exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+                    string assemlyPath = Path.GetFullPath(Path.Combine(
+                        exeDir, "..", "..", "ConsoleApp1", "release_win-x64", "ConsoleApp1.dll"));
+
+                    var path = Path.GetFullPath(assemlyPath);
+                    var environmentReloadRequest = new FunctionEnvironmentReloadRequest()
+                    {
+                        EnvironmentVariables = { { "MY_ENV_VAR1", "MY_ENV_VALUE" } },
+                        FunctionAppDirectory = path,
+                    };
+                    var environmentReloadStreamingMsg = new StreamingMessage { FunctionEnvironmentReloadRequest = environmentReloadRequest };
+                    await _outgoingMessageChannel.Writer.WriteAsync(environmentReloadStreamingMsg);
+
+                }
             }
         }
         private async Task SendMessages(IServerStreamWriter<StreamingMessage> responseStream)

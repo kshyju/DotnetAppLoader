@@ -1,0 +1,1 @@
+.\out\publish\HostWebApp\release_win-x64\HostWebApp.exe
