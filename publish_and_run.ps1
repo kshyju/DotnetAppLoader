@@ -24,4 +24,4 @@ foreach ($proj in $projects) {
 # Start the HostWebApp
 $hostWebAppExe = ".\out\publish\HostWebApp\release_win-x64\HostWebApp.exe"
 Write-Output "Starting HostWebApp: $hostWebAppExe"
-# Start-Process $hostWebAppExe
+Start-Process $hostWebAppExe
