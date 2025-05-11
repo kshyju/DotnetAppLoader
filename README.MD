@@ -1,8 +1,5 @@
-## Case 1 - AOT Publish
-
 ### To run
 
-#### 1. Publish DotnetAppLoader 
 Open a powershell terminal and run the below commands from the root of the repo.
 
 ```bash
